@@ -40,6 +40,16 @@ Edits you save in `src/` reload the panel automatically. The document sandbox (`
 | `src/shared/DocumentSandboxApi.ts` | The contract between the panel and the sandbox |
 | `src/manifest.json` | Add-on name, version, entry points |
 
+## Working on the document sandbox
+
+`src/sandbox/code.ts` runs inside Express, not in the browser, and a few things there are not obvious:
+
+- **Experimental APIs throw at runtime.** Anything marked `@experimental` in the SDK typings (and some things that are not marked, such as `selectionIncludingNonEditable`) throws "Experimental APIs are not supported" unless the manifest opts in, and that opt-in is not allowed in a submitted add-on. `allDescendants` is one: walk `children` instead (see `walk()` in `code.ts`).
+- **Read the selection before any `await`.** The first press in the panel after selecting on the canvas can arrive while Express reports no selection at all. The panel waits for it (`src/ui/selection.ts`) and shows what Express currently sees under the tabs.
+- **Don't rely on the value `keepContentActiveDuringAsync` passes to its callback.** Capture what the async lambda produced in a closure instead; inside Express the argument has not reliably been that value.
+- **Keep sandbox calls synchronous where you can.** Applying a font loads it in one call (`loadFont`) and applies it in a second, synchronous one, like applying a color. A stalled call otherwise leaves the panel silent.
+- **A red notice means the sandbox is stale.** The panel and sandbox carry the same build id; if Express is still running an older sandbox after a reload, the panel says so. Reconnect the add-on to force it.
+
 ## Package for submission
 
 ```bash

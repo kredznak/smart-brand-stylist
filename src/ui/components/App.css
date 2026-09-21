@@ -72,8 +72,6 @@ small { color: var(--muted); font-size: 11px; }
 .badge.ok { background: #143d2a; color: #7be0a8; }
 .badge.off { background: #4a1d1a; color: #ff9d94; }
 .status { margin: 0; min-height: 16px; font-size: 12px; color: var(--muted); }
-.diag summary { font-size: 12px; color: var(--muted); }
-.diag pre { margin: 6px 0 0; max-height: 180px; overflow: auto; font-size: 10px; line-height: 1.35; white-space: pre-wrap; word-break: break-all; color: var(--muted); }
 .notice { margin: 0; padding: 8px 10px; border-radius: 8px; background: #4a1d1a; color: #ff9d94; font-size: 12px; line-height: 1.4; }
 /* The tabs scroll well past the panel, and this is the only feedback an action gives.
    Left in the flow it lands below the fold, so a click looks like it did nothing. */

@@ -1,5 +1,4 @@
 import { SandboxProxy } from "../shared/DocumentSandboxApi";
-import { log } from "./diagnostics";
 
 const ATTEMPTS = 10;
 const GAP_MS = 80;
@@ -16,9 +15,7 @@ const GAP_MS = 80;
  */
 export async function settleSelection(sandboxProxy: SandboxProxy): Promise<void> {
     for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
-        const info = await sandboxProxy.describeSelection();
-        log(`settle ${attempt}: ${JSON.stringify(info)}`);
-        const { selected, locked } = info;
+        const { selected, locked } = await sandboxProxy.describeSelection();
         if (selected > 0 || locked > 0) return;
         await new Promise(resolve => setTimeout(resolve, GAP_MS));
     }

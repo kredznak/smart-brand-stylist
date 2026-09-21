@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { BrandColor, generatePalette, Harmony, HARMONIES, normalizeHex, readableTextOn, toBrandColors } from "../../shared/color";
 import { AuditResult, BrandFonts, SandboxProxy } from "../../shared/DocumentSandboxApi";
 import { BUILD } from "../../shared/build";
-import { captureGlobalErrors, log, subscribe } from "../diagnostics";
 import { analyzeSite } from "../api";
 import { analyzeLogo, dataUrlToBlob } from "../extractColors";
 import { catalogNamesForFamilies } from "../fontCatalog";
@@ -74,21 +73,11 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
     // While developing, reloading the panel does not always reload the document sandbox,
     // and an old sandbox answering a new panel produces confusing, wrong messages.
     const [staleSandbox, setStaleSandbox] = useState(false);
-    const [diagnostics, setDiagnostics] = useState<string[]>([]);
     useEffect(() => {
-        captureGlobalErrors();
-        log(`panel build ${BUILD}`);
         sandboxProxy
             .build()
-            .then(build => {
-                log(`sandbox build ${build}`);
-                setStaleSandbox(build !== BUILD);
-            })
-            .catch(e => {
-                log(`sandbox build() failed: ${e instanceof Error ? e.message : String(e)}`);
-                setStaleSandbox(true); // an older sandbox has no build() at all
-            });
-        return subscribe(setDiagnostics);
+            .then(build => setStaleSandbox(build !== BUILD))
+            .catch(() => setStaleSandbox(true)); // an older sandbox has no build() at all
     }, []);
 
     // What Express currently reports as selected, shown live, so it is clear before an
@@ -152,14 +141,10 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
     async function run(action: () => Promise<string> | string) {
         try {
-            const message = await action();
-            log(`status <- ${JSON.stringify(message)}`);
-            setStatus(message);
+            setStatus(await action());
         } catch (e) {
             console.error(e);
-            const message = e instanceof Error ? e.message : "Something went wrong.";
-            log(`status <- error: ${message}`);
-            setStatus(message);
+            setStatus(e instanceof Error ? e.message : "Something went wrong.");
         }
     }
 
@@ -606,11 +591,6 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
                     )}
                 </section>
             )}
-
-            <details className="diag">
-                <summary>Diagnostics</summary>
-                <pre>{diagnostics.join("\n")}</pre>
-            </details>
 
             <p className="status pinned" role="status" aria-live="polite">
                 {status}
