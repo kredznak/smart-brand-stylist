@@ -1,5 +1,4 @@
 import { settleSelection } from "../selection";
-import { withTimeout } from "../timeout";
 import React, { useEffect, useMemo, useState } from "react";
 import { AuditFont, BrandFonts, FontInfo, SandboxProxy } from "../../shared/DocumentSandboxApi";
 import { suggestFonts } from "../api";
@@ -59,10 +58,10 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
             setApplying(slot);
             let result;
             try {
-                const loaded = await withTimeout(sandboxProxy.loadFont(font.postscriptName), 10000, "Express took too long to load the font. Try again.");
+                const loaded = await sandboxProxy.loadFont(font.postscriptName);
                 if (!loaded) return `${font.family} isn't available in this Express account.`;
                 await settleSelection(sandboxProxy);
-                result = await withTimeout(sandboxProxy.applyFontToSelection(font.postscriptName), 10000, "Express took too long to change the text. Try again.");
+                result = await sandboxProxy.applyFontToSelection(font.postscriptName);
             } finally {
                 setApplying(null);
             }

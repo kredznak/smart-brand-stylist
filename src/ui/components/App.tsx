@@ -87,7 +87,11 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
         if (step !== "kit") return;
         let cancelled = false;
         const poll = () =>
-            sandboxProxy
+            // Nothing can be selected or acted on while the panel is hidden, so the
+            // twice-a-second round trip into Express is pure waste until it is back.
+            document.hidden
+                ? undefined
+                : sandboxProxy
                 .describeSelection()
                 .then(info => {
                     if (!cancelled) setSelectionInfo(info);
