@@ -1,3 +1,4 @@
+import { settleSelection } from "../selection";
 import React, { useState } from "react";
 import { BrandFonts, SandboxProxy } from "../../shared/DocumentSandboxApi";
 import { suggestCopy } from "../api";
@@ -60,7 +61,10 @@ const CopyTab = ({ sandboxProxy, voice, fonts, primaryHex, onVoiceChange, run }:
         });
 
     const replaceSelected = (text: string) =>
-        run(async () => ((await sandboxProxy.replaceSelectedText(text)) ? "Replaced the selected text." : "Select a text item on the canvas first."));
+        run(async () => {
+            await settleSelection(sandboxProxy);
+            return (await sandboxProxy.replaceSelectedText(text)) ? "Replaced the selected text." : "Select a text item on the canvas first.";
+        });
 
     return (
         <section>

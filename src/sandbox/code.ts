@@ -149,6 +149,11 @@ function start(): void {
     const sandboxApi: DocumentSandboxApi = {
         build: () => BUILD,
 
+        describeSelection() {
+            const selected = editor.context.selection.length;
+            return { selected, locked: Math.max(0, editor.context.selectionIncludingNonEditable.length - selected) };
+        },
+
         auditPage(paletteHex: string[], tolerance: number): AuditResult {
             const { uses, scanned } = collectColorUses(pageRoots());
             const byHex = new Map<string, AuditColor>();

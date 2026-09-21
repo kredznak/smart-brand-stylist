@@ -1,3 +1,4 @@
+import { settleSelection } from "../selection";
 import React, { useEffect, useMemo, useState } from "react";
 import { AuditFont, BrandFonts, FontInfo, SandboxProxy } from "../../shared/DocumentSandboxApi";
 import { suggestFonts } from "../api";
@@ -41,6 +42,7 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
 
     const pickFromSelection = (slot: "heading" | "body") =>
         run(async () => {
+            await settleSelection(sandboxProxy);
             const font = await sandboxProxy.getSelectionFont();
             if (!font) return "Select some text on the canvas first.";
             onChange({ ...fonts, [slot]: font });
@@ -52,6 +54,7 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
         run(async () => {
             const font = fonts[slot];
             if (!font) return `Choose a ${slot} font first.`;
+            await settleSelection(sandboxProxy);
             const result = await sandboxProxy.applyFontToSelection(font.postscriptName);
             // In development the panel can reload while Express keeps the older sandbox script,
             // which still answers with a plain number. Say so instead of misreading it.

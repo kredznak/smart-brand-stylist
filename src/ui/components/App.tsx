@@ -1,3 +1,4 @@
+import { settleSelection } from "../selection";
 import React, { useEffect, useRef, useState } from "react";
 import { BrandColor, generatePalette, Harmony, HARMONIES, normalizeHex, readableTextOn, toBrandColors } from "../../shared/color";
 import { AuditResult, BrandFonts, SandboxProxy } from "../../shared/DocumentSandboxApi";
@@ -230,6 +231,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
     const applyToSelection = (hex: string) =>
         run(async () => {
+            await settleSelection(sandboxProxy);
             const changed = await sandboxProxy.applyColorToSelection(hex);
             return changed === 0 ? "Select something on the canvas first." : `Applied ${hex} to ${plural(changed, "item")}.`;
         });

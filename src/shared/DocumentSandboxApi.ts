@@ -60,6 +60,8 @@ export interface ApplyFontResult {
 export interface DocumentSandboxApi {
     /** Build id of the running sandbox script, so the panel can detect a stale one. */
     build(): string;
+    /** What Express currently reports as selected, so the panel can wait for it before acting. */
+    describeSelection(): { selected: number; locked: number };
     auditPage(paletteHex: string[], tolerance: number): AuditResult;
     fixOffBrandColors(paletteHex: string[], tolerance: number): number;
     applyColorToSelection(hex: string): number;
