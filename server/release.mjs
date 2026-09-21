@@ -21,12 +21,21 @@ const step = message => console.log(`\n• ${message}`);
 const done = message => console.log(`  ${message}`);
 
 function wrangler(args, { input, quiet } = {}) {
-    return execFileSync("npx", ["wrangler", ...args], {
-        cwd: here,
-        input,
-        encoding: "utf8",
-        stdio: input === undefined ? ["ignore", "pipe", quiet ? "pipe" : "inherit"] : ["pipe", "pipe", "pipe"]
-    });
+    try {
+        return execFileSync("npx", ["wrangler", ...args], {
+            cwd: here,
+            input,
+            encoding: "utf8",
+            stdio: input === undefined ? ["ignore", "pipe", quiet ? "pipe" : "inherit"] : ["pipe", "pipe", "pipe"]
+        });
+    } catch (e) {
+        // execFileSync throws an object whose default rendering is a wall of buffers.
+        // What is wanted is whatever wrangler actually said.
+        const said = `${e.stdout ?? ""}${e.stderr ?? ""}`.replace(/\x1B\[[0-9;]*m/g, "").trim();
+        const failure = new Error(said || `wrangler ${args[0]} failed`);
+        failure.said = said;
+        throw failure;
+    }
 }
 
 // --- 1. signed in? -------------------------------------------------------------------
@@ -127,7 +136,27 @@ if (secrets.some(s => s.name === "ANTHROPIC_API_KEY")) {
 
 // --- 4. deploy -----------------------------------------------------------------------
 step("Deploying");
-const output = wrangler(["deploy"], { quiet: true });
+let output;
+try {
+    output = wrangler(["deploy"], { quiet: true });
+} catch (e) {
+    if (/workers\.dev subdomain/i.test(e.said ?? "")) {
+        const account = (who.match(/\b[0-9a-f]{32}\b/) ?? [""])[0];
+        console.error(`
+  Your Cloudflare account has no workers.dev subdomain yet, so there is nowhere
+  to publish to. This is a one-time account setup and has to be done in the
+  dashboard; wrangler has no command for it.
+
+      https://dash.cloudflare.com/${account}/workers/onboarding
+
+  Pick any subdomain, then run this again. The Worker and its key are already
+  uploaded, so it will only need the last step.
+`);
+        process.exit(1);
+    }
+    console.error(`\n  Deploy failed:\n\n${(e.said ?? e.message).split("\n").map(l => "  " + l).join("\n")}\n`);
+    process.exit(1);
+}
 const url = output.match(/https:\/\/[^\s]+\.workers\.dev/)?.[0];
 if (!url) {
     console.error(output);
