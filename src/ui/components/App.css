@@ -70,6 +70,10 @@ small { color: var(--muted); font-size: 11px; }
 .badge.ok { background: #143d2a; color: #7be0a8; }
 .badge.off { background: #4a1d1a; color: #ff9d94; }
 .status { margin: 0; min-height: 16px; font-size: 12px; color: var(--muted); }
+/* The tabs scroll well past the panel, and this is the only feedback an action gives.
+   Left in the flow it lands below the fold, so a click looks like it did nothing. */
+.status.pinned { position: sticky; bottom: 0; z-index: 1; padding: 8px 0 4px; background: var(--bg); box-shadow: 0 -8px 8px -6px var(--bg); }
+.status.pinned:empty { padding: 0; box-shadow: none; }
 
 /* Fonts and Copy tabs */
 .fontSlot { background: var(--surface); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }

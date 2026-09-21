@@ -541,7 +541,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
                 </section>
             )}
 
-            <p className="status" role="status" aria-live="polite">
+            <p className="status pinned" role="status" aria-live="polite">
                 {status}
             </p>
         </div>
