@@ -71,7 +71,10 @@ export interface DocumentSandboxApi {
     getAvailableFonts(postscriptNames: string[]): Promise<FontInfo[]>;
     /** Font of the first selected text, so users can pick a brand font straight from the canvas. */
     getSelectionFont(): FontInfo | null;
-    applyFontToSelection(postscriptName: string): Promise<ApplyFontResult>;
+    /** Loads a font into the sandbox ahead of applying it. False if Express has no such font. */
+    loadFont(postscriptName: string): Promise<boolean>;
+    /** Synchronous on purpose, like applyColorToSelection: call loadFont first. */
+    applyFontToSelection(postscriptName: string): ApplyFontResult;
     auditFonts(brandFamilies: string[]): AuditFont[];
     /** Large text gets the heading font, the rest gets the body font. Returns runs changed. */
     fixOffBrandFonts(fonts: BrandFonts): Promise<number>;

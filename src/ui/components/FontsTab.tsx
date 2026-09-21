@@ -1,4 +1,5 @@
 import { settleSelection } from "../selection";
+import { withTimeout } from "../timeout";
 import React, { useEffect, useMemo, useState } from "react";
 import { AuditFont, BrandFonts, FontInfo, SandboxProxy } from "../../shared/DocumentSandboxApi";
 import { suggestFonts } from "../api";
@@ -20,6 +21,7 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
     const [audit, setAudit] = useState<AuditFont[] | null>(null);
     const [aiReason, setAiReason] = useState("");
     const [thinking, setThinking] = useState(false);
+    const [applying, setApplying] = useState<"heading" | "body" | null>(null);
 
     // Ask Express which of our curated fonts this user can use.
     useEffect(() => {
@@ -54,8 +56,16 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
         run(async () => {
             const font = fonts[slot];
             if (!font) return `Choose a ${slot} font first.`;
-            await settleSelection(sandboxProxy);
-            const result = await sandboxProxy.applyFontToSelection(font.postscriptName);
+            setApplying(slot);
+            let result;
+            try {
+                const loaded = await withTimeout(sandboxProxy.loadFont(font.postscriptName), 10000, "Express took too long to load the font. Try again.");
+                if (!loaded) return `${font.family} isn't available in this Express account.`;
+                await settleSelection(sandboxProxy);
+                result = await withTimeout(sandboxProxy.applyFontToSelection(font.postscriptName), 10000, "Express took too long to change the text. Try again.");
+            } finally {
+                setApplying(null);
+            }
             // In development the panel can reload while Express keeps the older sandbox script,
             // which still answers with a plain number. Say so instead of misreading it.
             if (typeof result !== "object" || result === null) {
@@ -115,8 +125,8 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
                         <strong>{fontLabel(fonts[slot])}</strong>
                     </div>
                     <div className="slotActions">
-                        <button className="mini" onClick={() => apply(slot)} disabled={!fonts[slot]}>
-                            Apply to selection
+                        <button className="mini" onClick={() => apply(slot)} disabled={!fonts[slot] || applying !== null}>
+                            {applying === slot ? "Applying…" : "Apply to selection"}
                         </button>
                         <button className="mini" onClick={() => pickFromSelection(slot)}>
                             Use selected text's font

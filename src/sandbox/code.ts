@@ -141,6 +141,10 @@ async function loadFonts(names: (string | undefined)[]): Promise<Map<string, Ava
     return loaded;
 }
 
+// Fonts already looked up, so applying one needs no await. Unlike page content, a
+// font object is not a scene node and is safe to keep across calls.
+const fontCache = new Map<string, AvailableFont>();
+
 function pageRoots(): Iterable<any> {
     return editor.context.currentPage.artboards;
 }
@@ -255,44 +259,46 @@ function start(): void {
             return null;
         },
 
-        async applyFontToSelection(postscriptName: string): Promise<ApplyFontResult> {
-            const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0, locked: 0 };
+        async loadFont(postscriptName: string): Promise<boolean> {
+            if (fontCache.has(postscriptName)) return true;
+            try {
+                const font = await fonts.fromPostscriptName(postscriptName);
+                if (!font) return false;
+                fontCache.set(postscriptName, font);
+                return true;
+            } catch (e) {
+                console.log("Font lookup failed for", postscriptName, e);
+                return false;
+            }
+        },
 
-            // Read the selection before anything is awaited. Pressing a button in the panel
-            // moves focus off the canvas, and Express clears the selection once that settles,
-            // so by the time the font has loaded there is nothing left to read. Holding the
-            // models across the wait is what keepContentActiveDuringAsync is for.
+        // Deliberately synchronous, shaped like applyColorToSelection, which has always
+        // worked. The earlier version awaited the font inside keepContentActiveDuringAsync;
+        // that gave the selection a window to vanish and, if the call stalled, produced no
+        // answer at all, which from the panel looked like a dead button.
+        applyFontToSelection(postscriptName: string): ApplyFontResult {
+            const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0, locked: 0 };
             const selection = editor.context.selection;
             result.selected = selection.length;
-            // A locked text box is left out of `selection` altogether, which looks exactly like
-            // nothing being selected unless this is checked as well.
             result.locked = Math.max(0, editor.context.selectionIncludingNonEditable.length - selection.length);
             const models = collectTextModels(selection);
             result.textFound = models.length;
             if (models.length === 0) return result;
 
-            await editor.keepContentActiveDuringAsync(
-                editor.context.currentPage,
-                () => loadFonts([postscriptName]),
-                loaded => {
-                    const font = loaded.get(postscriptName);
-                    if (!font) {
-                        result.error = `${postscriptName} is not available to this Express account.`;
-                        return;
-                    }
-
-                    for (const model of models) {
-                        try {
-                            model.applyCharacterStyles({ font });
-                            result.changed++;
-                        } catch (e) {
-                            // Report it rather than let it look like nothing was selected.
-                            result.error = e instanceof Error ? e.message : String(e);
-                            console.log("Could not change the font of a text item:", e);
-                        }
-                    }
+            const font = fontCache.get(postscriptName);
+            if (!font) {
+                result.error = `${postscriptName} has not been loaded yet. Press Apply again.`;
+                return result;
+            }
+            for (const model of models) {
+                try {
+                    model.applyCharacterStyles({ font });
+                    result.changed++;
+                } catch (e) {
+                    result.error = e instanceof Error ? e.message : String(e);
+                    console.log("Could not change the font of a text item:", e);
                 }
-            );
+            }
             return result;
         },
 

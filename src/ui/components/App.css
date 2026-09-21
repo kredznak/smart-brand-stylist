@@ -84,6 +84,8 @@ small { color: var(--muted); font-size: 11px; }
 .slotName { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
 .slotActions { display: flex; flex-wrap: wrap; gap: 6px; }
 .mini { height: 28px; padding: 0 10px; border: 1px solid var(--line); border-radius: 14px; background: none; color: var(--text); font-size: 12px; }
+.mini:hover:not(:disabled) { border-color: var(--text); }
+.mini:active:not(:disabled) { transform: scale(0.97); background: var(--surface); }
 .mini:disabled { opacity: 0.4; cursor: default; }
 .secondary:disabled { opacity: 0.5; cursor: default; }
 .pairings { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
