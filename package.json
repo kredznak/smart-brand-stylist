@@ -6,7 +6,8 @@
         "clean": "ccweb-add-on-scripts clean",
         "build": "ccweb-add-on-scripts build --use webpack",
         "start": "ccweb-add-on-scripts start --use webpack",
-        "package": "ccweb-add-on-scripts package --use webpack"
+        "package": "ccweb-add-on-scripts package --use webpack",
+        "smoke": "node tools/smoke/guard.test.mjs && node tools/smoke/run.mjs"
     },
     "keywords": [
         "Adobe",

@@ -40,6 +40,18 @@ Edits you save in `src/` reload the panel automatically. The document sandbox (`
 | `src/shared/DocumentSandboxApi.ts` | The contract between the panel and the sandbox |
 | `src/manifest.json` | Add-on name, version, entry points |
 
+## Check it still works
+
+```bash
+npm run build && npm run smoke
+```
+
+This drives the built panel in a headless browser with a stand-in for the Express SDK, presses every button on every tab, and fails if an action stops reporting what it did. It needs Chrome (set `CHROME` if it is not in the usual place).
+
+It is here because this panel's real faults have all been runtime ones that a type check cannot see: a selection read a moment too late, a wrapper that swallowed `toString`, an Express API that throws unless a manifest flag is set. Every one of them looked the same from outside — a button that quietly did nothing.
+
+It is not a substitute for opening the add-on in Express. The stand-in answers instantly and always succeeds, so anything about how Express really behaves has to be checked there.
+
 ## Working on the document sandbox
 
 `src/sandbox/code.ts` runs inside Express, not in the browser, and a few things there are not obvious:

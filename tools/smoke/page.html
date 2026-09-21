@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+  window.__selection = { selected: 1, locked: 0, text: 1 };
+  window.__errors = [];
+  addEventListener("error", e => window.__errors.push(String(e.message)));
+  addEventListener("unhandledrejection", e =>
+      window.__errors.push("rejection: " + ((e.reason && e.reason.message) || e.reason)));
+</script>
+<script type="importmap">
+{ "imports": { "https://new.express.adobe.com/static/add-on-sdk/sdk.js": "/tools/smoke/mock-sdk.js" } }
+</script>
+<script type="module" src="/dist/index.js"></script>
+</head>
+<body style="width:321px;margin:0">
+<div id="root"></div>
+<pre id="result">pending</pre>
+<script>
+(async () => {
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    const button = label => [...document.querySelectorAll("button")].find(b => b.textContent.trim() === label);
+    const status = () => (document.querySelector(".status") || {}).textContent?.trim() || "";
+    const out = { steps: [], errors: [], called: [] };
+
+    const press = async label => {
+        const b = button(label);
+        if (!b) { out.steps.push([label, "BUTTON NOT FOUND"]); return; }
+        b.click();
+        await sleep(900);
+        out.steps.push([label, status()]);
+    };
+    const openTab = async label => { button(label)?.click(); await sleep(400); };
+
+    let mounted = null;
+    for (let i = 0; i < 60 && !mounted; i++) { await sleep(100); mounted = button("Colors"); }
+    out.mounted = !!mounted;
+
+    // The panel reads its build id from the sandbox on startup and warns if they differ.
+    window.__BUILD = (document.querySelector(".notice") ? "mismatch" : undefined);
+
+    await press("Primary");
+    await press("Add palette to page");
+    await openTab("Fonts");
+    await press("Apply to selection");
+    await press("Use selected text's font");
+    await press("Scan fonts on this page");
+    await press("Fix 1 off-brand font");
+    await openTab("Audit");
+    await press("Scan colors on this page");
+    await press("Fix 1 off-brand color");
+
+    out.errors = window.__errors;
+    out.called = [...new Set(window.__called)];
+    document.getElementById("result").textContent = "@@" + JSON.stringify(out) + "@@";
+})();
+</script>
+</body>
+</html>
