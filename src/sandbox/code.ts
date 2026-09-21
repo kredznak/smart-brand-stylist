@@ -145,6 +145,20 @@ async function loadFonts(names: (string | undefined)[]): Promise<Map<string, Ava
 // font object is not a scene node and is safe to keep across calls.
 const fontCache = new Map<string, AvailableFont>();
 
+/**
+ * How many clicked nodes Express is keeping out of the selection because they are locked.
+ * selectionIncludingNonEditable is an experimental API: it throws unless the manifest opts
+ * in, and that opt-in is not allowed in a distributed add-on, so its absence must cost
+ * nothing more than not being able to say "that text is locked".
+ */
+function lockedCount(selected: number): number {
+    try {
+        return Math.max(0, editor.context.selectionIncludingNonEditable.length - selected);
+    } catch {
+        return 0;
+    }
+}
+
 function pageRoots(): Iterable<any> {
     return editor.context.currentPage.artboards;
 }
@@ -156,11 +170,7 @@ function start(): void {
         describeSelection() {
             const selection = editor.context.selection;
             const selected = selection.length;
-            return {
-                selected,
-                locked: Math.max(0, editor.context.selectionIncludingNonEditable.length - selected),
-                text: collectTextModels(selection).length
-            };
+            return { selected, locked: lockedCount(selected), text: collectTextModels(selection).length };
         },
 
         auditPage(paletteHex: string[], tolerance: number): AuditResult {
@@ -280,7 +290,7 @@ function start(): void {
             const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0, locked: 0 };
             const selection = editor.context.selection;
             result.selected = selection.length;
-            result.locked = Math.max(0, editor.context.selectionIncludingNonEditable.length - selection.length);
+            result.locked = lockedCount(selection.length);
             const models = collectTextModels(selection);
             result.textFound = models.length;
             if (models.length === 0) return result;
@@ -320,6 +330,9 @@ function start(): void {
         },
 
         async fixOffBrandFonts(brandFonts: BrandFonts): Promise<number> {
+            // Captured here rather than taken from the callback argument: inside Express that
+            // argument has not reliably been the Map the async lambda returned.
+            let loaded: Map<string, AvailableFont> = new Map();
             const headingName = (brandFonts.heading ?? brandFonts.body)?.postscriptName;
             const bodyName = (brandFonts.body ?? brandFonts.heading)?.postscriptName;
             const brandFamilies = [brandFonts.heading, brandFonts.body]
@@ -328,8 +341,10 @@ function start(): void {
             let changed = 0;
             await editor.keepContentActiveDuringAsync(
                 editor.context.currentPage,
-                () => loadFonts([headingName, bodyName]),
-                loaded => {
+                async () => {
+                    loaded = await loadFonts([headingName, bodyName]);
+                },
+                () => {
                     const heading = headingName ? loaded.get(headingName) : undefined;
                     const body = bodyName ? loaded.get(bodyName) : undefined;
                     for (const model of collectTextModels(pageRoots())) {
@@ -354,10 +369,15 @@ function start(): void {
         },
 
         async addTextToPage(text: string, style: TextStyle): Promise<void> {
+            // Captured here rather than taken from the callback argument: inside Express that
+            // argument has not reliably been the Map the async lambda returned.
+            let loaded: Map<string, AvailableFont> = new Map();
             await editor.keepContentActiveDuringAsync(
                 editor.context.currentPage,
-                () => loadFonts([style.postscriptName]),
-                loaded => {
+                async () => {
+                    loaded = await loadFonts([style.postscriptName]);
+                },
+                () => {
                     const parent = editor.context.insertionParent;
                     const node = editor.createText(text);
                     parent.children.append(node);
