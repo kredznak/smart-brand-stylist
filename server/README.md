@@ -32,14 +32,49 @@ Reviewers and real users cannot reach your laptop, so the server has to be onlin
 
 ```bash
 npx wrangler login
+npx wrangler kv namespace create USAGE
+```
+
+That second command prints an `id`. Open `wrangler.toml` and paste it in place of `replace-with-your-kv-namespace-id`. Then:
+
+```bash
 npx wrangler secret put ANTHROPIC_API_KEY
 npm run deploy
 ```
 
 Wrangler prints a URL like `https://smart-brand-stylist-api.<you>.workers.dev`. Paste it into `src/ui/config.ts` as `PRODUCTION_API_BASE`, then rebuild the add-on. Local testing keeps using `http://localhost:8787` automatically, so you do not have to switch this back and forth.
 
-## Before going public
+## Usage limits
 
-- Add rate limiting (Cloudflare dashboard > Security > WAF > Rate limiting rules) so nobody can run up your API bill.
-- Set a monthly spend limit in the Anthropic console.
-- Write a privacy policy that says brand details and the logo image are sent to this server and to Anthropic to generate suggestions, and are not stored.
+The add-on is free to its users, so every Claude call is paid for by whoever deploys this. Three limits keep that bill predictable, and all of them are already in the code.
+
+| Limit | Default | Where to change it |
+| --- | --- | --- |
+| Burst, per caller | 10 requests/minute | `[[unsafe.bindings]]` in `wrangler.toml` |
+| Claude requests, per caller per day | 60 | `DAILY_LIMIT` in `wrangler.toml` |
+| Website reads, per caller per day | 200 | `DAILY_SITE_LIMIT` in `wrangler.toml` |
+
+Claude requests and website reads are counted separately, because reading a page costs nothing but bandwidth while asking Claude costs money. A day spent trying out websites therefore cannot use up the AI budget, and each refusal names the allowance that actually ran out.
+
+Callers are identified by IP address (`CF-Connecting-IP`). The daily counters live in the `USAGE` KV namespace under `<date>:<quota>:<ip>` and expire after 48 hours. The counter is read-then-write rather than atomic, so a simultaneous burst can overshoot a limit slightly; that is deliberate, since the alternative costs a durable object for no real benefit at this scale.
+
+Requests that never reach a handler — unknown paths, CORS preflights — do not consume an allowance.
+
+If you want a layer that runs before the Worker does, add a Cloudflare WAF rate-limiting rule in the dashboard under **Security > WAF > Rate limiting rules**.
+
+## Cap your Anthropic spend
+
+The usage limits above are per caller, so enough callers can still add up. Put a hard ceiling on the account itself:
+
+1. Go to https://console.anthropic.com > **Settings** > **Limits**.
+2. Set a **monthly spend limit**. Start low; you can raise it once you see real usage.
+3. On the same page set **email alerts** at a fraction of that, so you hear about it before the cap is hit rather than when suggestions stop working.
+4. Give this project its own **API key** (Settings > API keys) rather than reusing one, so you can revoke it without affecting anything else.
+
+Worth knowing: when the cap is reached, Anthropic starts refusing requests and the add-on shows "The AI service returned an error. Please try again." Nothing breaks, but the AI features stop until the next month or until you raise the cap.
+
+## Privacy policy
+
+Adobe asks for a privacy policy URL when you submit an add-on. There is a complete draft in [`PRIVACY.md`](../PRIVACY.md) at the root of this repository, written to match what the code actually does. Publish it somewhere public — GitHub Pages, or your own site — and give Adobe that URL.
+
+Read it before you publish it. It is accurate as of this commit, and it will stop being accurate if you change what gets sent to the server, add analytics, or start storing anything. It is a starting point written by a developer, not legal advice.

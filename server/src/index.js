@@ -17,6 +17,46 @@ const CORS = {
 const json = (body, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...CORS } });
 
+// --- Usage limits ---------------------------------------------------------------------------------
+// The add-on is free, so every AI call is paid for by us. Two layers keep the bill predictable:
+//   1. Burst: BURST rate-limit binding (see wrangler.toml), a few requests per minute per caller.
+//   2. Daily: USAGE KV namespace counts requests per caller per UTC day.
+// Both are keyed by the caller's IP. If a binding is missing (for example in local dev) that layer is skipped.
+
+// Asking Claude costs money; reading a web page does not. They get separate daily
+// allowances so a day spent trying out websites cannot use up the AI budget, and so
+// each refusal can name the thing that actually ran out.
+const QUOTAS = {
+    ai: { variable: "DAILY_LIMIT", fallback: 60, noun: "AI suggestions" },
+    site: { variable: "DAILY_SITE_LIMIT", fallback: 200, noun: "website checks" }
+};
+
+const callerKey = request => request.headers.get("CF-Connecting-IP") || "unknown";
+
+async function checkLimits(request, env, quota) {
+    const key = callerKey(request);
+
+    if (env.BURST) {
+        const { success } = await env.BURST.limit({ key });
+        if (!success) return json({ error: "You're going a little fast. Please wait a minute and try again." }, 429);
+    }
+
+    if (env.USAGE) {
+        const { variable, fallback, noun } = QUOTAS[quota];
+        const limit = Number(env[variable]) || fallback;
+        const day = new Date().toISOString().slice(0, 10);
+        const usageKey = `${day}:${quota}:${key}`;
+        const used = Number(await env.USAGE.get(usageKey)) || 0;
+        if (used >= limit) {
+            return json({ error: `You've reached today's limit of ${limit} ${noun}. It resets at midnight UTC.` }, 429);
+        }
+        // Counter expires two days later so KV cleans itself up. Not atomic, so a burst can overshoot slightly.
+        await env.USAGE.put(usageKey, String(used + 1), { expirationTtl: 60 * 60 * 48 });
+    }
+
+    return null;
+}
+
 const clean = (value, max) => (typeof value === "string" ? value.trim().slice(0, max) : "");
 
 const KINDS = {
@@ -158,10 +198,18 @@ export default {
         if (request.method !== "POST") return json({ error: "Use POST." }, 405);
 
         const { pathname } = new URL(request.url);
-        const handler = { "/suggest-copy": suggestCopy, "/suggest-fonts": suggestFonts, "/analyze-site": analyzeSite }[pathname];
-        if (!handler) return json({ error: "Not found." }, 404);
+        const route = {
+            "/suggest-copy": { handler: suggestCopy, quota: "ai" },
+            "/suggest-fonts": { handler: suggestFonts, quota: "ai" },
+            "/analyze-site": { handler: analyzeSite, quota: "site" }
+        }[pathname];
+        if (!route) return json({ error: "Not found." }, 404);
+        const handler = route.handler;
 
         try {
+            const limited = await checkLimits(request, env, route.quota);
+            if (limited) return limited;
+
             const text = await request.text();
             if (text.length > 2_000_000) return json({ error: "Request too large." }, 413);
 

@@ -50,6 +50,10 @@ Edits you save in `src/` reload the panel automatically. The document sandbox (`
 - **Keep sandbox calls synchronous where you can.** Applying a font loads it in one call (`loadFont`) and applies it in a second, synchronous one, like applying a color. A stalled call otherwise leaves the panel silent.
 - **A red notice means the sandbox is stale.** The panel and sandbox carry the same build id; if Express is still running an older sandbox after a reload, the panel says so. Reconnect the add-on to force it.
 
+## Privacy and running costs
+
+[`PRIVACY.md`](PRIVACY.md) is a complete privacy policy matching what the code actually does; Adobe asks for a public URL to one when you submit. Usage limits, how to cap Anthropic spend, and what the server does and does not keep are all covered in [`server/README.md`](server/README.md).
+
 ## Package for submission
 
 ```bash
