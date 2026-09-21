@@ -33,6 +33,25 @@ function withAlpha(hex: string, alpha: number): Color {
     return { red: c.red, green: c.green, blue: c.blue, alpha };
 }
 
+/**
+ * The given nodes and everything inside them, walking `children` level by level.
+ * `allDescendants` would be shorter, but inside Express it throws "Experimental APIs are
+ * not supported" as soon as the selection holds a container such as a group or an image,
+ * and the manifest opt-in it wants is not allowed in a distributed add-on.
+ */
+function* walk(roots: Iterable<any>): Iterable<any> {
+    for (const root of roots) {
+        yield root;
+        let children: Iterable<any> | undefined;
+        try {
+            children = root.children;
+        } catch {
+            children = undefined; // not a container, or not readable
+        }
+        if (children) yield* walk(children);
+    }
+}
+
 /** Collects every solid color used by the given nodes (and everything inside them). */
 function collectColorUses(roots: Iterable<any>): { uses: ColorUse[]; scanned: number } {
     const uses: ColorUse[] = [];
@@ -86,12 +105,7 @@ function collectColorUses(roots: Iterable<any>): { uses: ColorUse[]; scanned: nu
         }
     };
 
-    for (const root of roots) {
-        visit(root);
-        if (root.allDescendants) {
-            for (const child of root.allDescendants) visit(child);
-        }
-    }
+    for (const node of walk(roots)) visit(node);
     return { uses, scanned };
 }
 
@@ -110,12 +124,7 @@ function collectTextModels(roots: Iterable<any>): any[] {
             console.log("Skipped a text node:", e);
         }
     };
-    for (const root of roots) {
-        visit(root);
-        if (root.allDescendants) {
-            for (const child of root.allDescendants) visit(child);
-        }
-    }
+    for (const node of walk(roots)) visit(node);
     return models;
 }
 
