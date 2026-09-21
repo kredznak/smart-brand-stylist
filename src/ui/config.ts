@@ -1,4 +1,15 @@
 // Where the AI helper server lives.
-// Local testing: run the server in the /server folder (see server/README.md) and keep this value.
-// Before submitting to Adobe: deploy the server and paste its https URL here.
-export const API_BASE = "http://localhost:8787";
+//
+// The panel is served from localhost only while you are testing locally, so the
+// address is chosen from that rather than edited by hand. A build you forget to
+// change therefore still points at the deployed server instead of your laptop.
+//
+// Before submitting to Adobe: deploy the server (see server/README.md) and paste
+// the URL wrangler prints into PRODUCTION_API_BASE below.
+const PRODUCTION_API_BASE = "https://smart-brand-stylist-api.CHANGE-ME.workers.dev";
+
+const LOCAL_API_BASE = "http://localhost:8787";
+
+const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+
+export const API_BASE = isLocal ? LOCAL_API_BASE : PRODUCTION_API_BASE;

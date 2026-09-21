@@ -32,7 +32,7 @@ npx wrangler secret put ANTHROPIC_API_KEY
 npm run deploy
 ```
 
-Wrangler prints a URL like `https://smart-brand-stylist-api.<you>.workers.dev`. Paste it into `src/ui/config.ts` as `API_BASE`, then rebuild the add-on.
+Wrangler prints a URL like `https://smart-brand-stylist-api.<you>.workers.dev`. Paste it into `src/ui/config.ts` as `PRODUCTION_API_BASE`, then rebuild the add-on. Local testing keeps using `http://localhost:8787` automatically, so you do not have to switch this back and forth.
 
 ## Before going public
 

@@ -115,10 +115,19 @@ export default {
         try {
             const text = await request.text();
             if (text.length > 2_000_000) return json({ error: "Request too large." }, 413);
-            return await handler(JSON.parse(text || "{}"), env);
+
+            let body;
+            try {
+                body = JSON.parse(text || "{}");
+            } catch {
+                // An unparseable body is the caller's mistake, so say so with a 4xx.
+                return json({ error: "The request was not valid JSON." }, 400);
+            }
+
+            return await handler(body, env);
         } catch (e) {
             console.log("Request failed:", e);
-            const message = e instanceof SyntaxError ? "The request or AI reply was not valid JSON." : e.message;
+            const message = e instanceof SyntaxError ? "The AI reply could not be read. Please try again." : e.message;
             return json({ error: message || "Something went wrong." }, 500);
         }
     }
