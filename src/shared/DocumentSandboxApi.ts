@@ -1,0 +1,67 @@
+import { BrandColor } from "./color";
+
+export interface AuditColor {
+    hex: string;
+    /** How many fills, strokes and text runs use this color on the page. */
+    count: number;
+    usedBy: ("fill" | "stroke" | "text")[];
+    nearestBrandHex: string | null;
+    distance: number;
+    onBrand: boolean;
+}
+
+export interface AuditResult {
+    colors: AuditColor[];
+    scanned: number;
+}
+
+export interface FontInfo {
+    postscriptName: string;
+    family: string;
+    style: string;
+}
+
+export interface AuditFont extends FontInfo {
+    /** Number of text runs on the page using this font. */
+    count: number;
+    onBrand: boolean;
+}
+
+export interface BrandFonts {
+    heading: FontInfo | null;
+    body: FontInfo | null;
+}
+
+export interface TextStyle {
+    postscriptName?: string;
+    hex?: string;
+    fontSize?: number;
+}
+
+// Everything the document sandbox (code.ts) exposes to the panel UI.
+export interface DocumentSandboxApi {
+    auditPage(paletteHex: string[], tolerance: number): AuditResult;
+    fixOffBrandColors(paletteHex: string[], tolerance: number): number;
+    applyColorToSelection(hex: string): number;
+    addPaletteToPage(palette: BrandColor[]): void;
+
+    /** Returns the subset of the given PostScript names that this user can actually use in Express. */
+    getAvailableFonts(postscriptNames: string[]): Promise<FontInfo[]>;
+    /** Font of the first selected text, so users can pick a brand font straight from the canvas. */
+    getSelectionFont(): FontInfo | null;
+    /** Returns how many text items changed, or -1 if the font is not available. */
+    applyFontToSelection(postscriptName: string): Promise<number>;
+    auditFonts(brandFamilies: string[]): AuditFont[];
+    /** Large text gets the heading font, the rest gets the body font. Returns runs changed. */
+    fixOffBrandFonts(fonts: BrandFonts): Promise<number>;
+    addTextToPage(text: string, style: TextStyle): Promise<void>;
+    /** Replaces the first selected text item. Returns false if no text is selected. */
+    replaceSelectedText(text: string): boolean;
+}
+
+// The panel UI talks to the sandbox through a proxy, so every call comes back as a Promise.
+export type SandboxProxy = {
+    [K in keyof DocumentSandboxApi]: (
+        ...args: Parameters<DocumentSandboxApi[K]>
+    ) => Promise<Awaited<ReturnType<DocumentSandboxApi[K]>>>;
+};

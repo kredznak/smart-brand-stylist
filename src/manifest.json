@@ -1,0 +1,22 @@
+{
+    "testId": "b6faf55c-e153-4f5f-9e91-f92e10b356cb",
+    "name": "Smart Brand Stylist",
+    "version": "1.0.0",
+    "manifestVersion": 2,
+    "requirements": {
+        "apps": [
+            {
+                "name": "Express",
+                "apiVersion": 1
+            }
+        ]
+    },
+    "entryPoints": [
+        {
+            "type": "panel",
+            "id": "panel1",
+            "main": "index.html",
+            "documentSandbox": "code.js"
+        }
+    ]
+}
