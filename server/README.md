@@ -28,21 +28,26 @@ Never commit `.dev.vars`. It is already in `.gitignore`.
 
 ## Deploy it (needed before submitting to Adobe)
 
-Reviewers and real users cannot reach your laptop, so the server has to be online. With a free Cloudflare account:
+Reviewers and real users cannot reach your laptop, so the server has to be online. With a free Cloudflare account, sign in once:
 
 ```bash
+cd server
 npx wrangler login
-npx wrangler kv namespace create USAGE
 ```
 
-That second command prints an `id`. Open `wrangler.toml` and paste it in place of `replace-with-your-kv-namespace-id`. Then:
+That opens a browser. Then:
 
 ```bash
-npx wrangler secret put ANTHROPIC_API_KEY
-npm run deploy
+npm run release
 ```
 
-Wrangler prints a URL like `https://smart-brand-stylist-api.<you>.workers.dev`. Paste it into `src/ui/config.ts` as `PRODUCTION_API_BASE`, then rebuild the add-on. Local testing keeps using `http://localhost:8787` automatically, so you do not have to switch this back and forth.
+which creates the `USAGE` store and writes its id into `wrangler.toml`, uploads the key from `.dev.vars` as a secret, deploys, and sets `PRODUCTION_API_BASE` in `src/ui/config.ts` to the URL it got back. Then rebuild the add-on from the project root with `npm run build`, and commit the two changed files.
+
+Run it as often as you like: anything already done is detected and left alone.
+
+It exists because two of those steps used to be copied by hand — the store id into `wrangler.toml`, and the deployed URL into `src/ui/config.ts`. Both fail silently when they go wrong, because the add-on still builds and only breaks once somebody uses it.
+
+Local testing keeps using `http://localhost:8787` whatever this is set to, so you never have to switch it back.
 
 ## Usage limits
 
