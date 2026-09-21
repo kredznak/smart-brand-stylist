@@ -243,7 +243,7 @@ function start(): void {
         },
 
         async applyFontToSelection(postscriptName: string): Promise<ApplyFontResult> {
-            const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0 };
+            const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0, locked: 0 };
 
             // Read the selection before anything is awaited. Pressing a button in the panel
             // moves focus off the canvas, and Express clears the selection once that settles,
@@ -251,6 +251,9 @@ function start(): void {
             // models across the wait is what keepContentActiveDuringAsync is for.
             const selection = editor.context.selection;
             result.selected = selection.length;
+            // A locked text box is left out of `selection` altogether, which looks exactly like
+            // nothing being selected unless this is checked as well.
+            result.locked = Math.max(0, editor.context.selectionIncludingNonEditable.length - selection.length);
             const models = collectTextModels(selection);
             result.textFound = models.length;
             if (models.length === 0) return result;

@@ -52,12 +52,19 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
         run(async () => {
             const font = fonts[slot];
             if (!font) return `Choose a ${slot} font first.`;
-            const { changed, selected, textFound, error } = await sandboxProxy.applyFontToSelection(font.postscriptName);
+            const result = await sandboxProxy.applyFontToSelection(font.postscriptName);
+            // In development the panel can reload while Express keeps the older sandbox script,
+            // which still answers with a plain number. Say so instead of misreading it.
+            if (typeof result !== "object" || result === null) {
+                return "The add-on is half reloaded. Reload the whole Express page (Cmd/Ctrl+R) and try again.";
+            }
+            const { changed, selected, textFound, locked, error } = result;
             if (changed > 0) return `Applied ${font.family} to ${plural(changed, "text item")}.`;
             if (error) return error;
-            if (selected === 0) return "Select some text on the canvas first, then press this again.";
-            if (textFound === 0) return `That selection has no text in it. Click a text box, not a shape or image.`;
-            return `${font.family} could not be applied. The text may be locked.`;
+            if (selected === 0 && locked > 0) return "That text box is locked, so Express won't let the add-on change it. Unlock it, then press Apply again.";
+            if (selected === 0) return "Nothing is selected on the canvas. Click the text box once so it shows handles (don't double-click into the text), then press Apply.";
+            if (textFound === 0) return "That selection has no text in it. Click a text box, not a shape or image.";
+            return `${font.family} could not be applied to that text.`;
         });
 
     const askAi = () =>

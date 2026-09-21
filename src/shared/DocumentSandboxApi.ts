@@ -50,6 +50,8 @@ export interface ApplyFontResult {
     selected: number;
     /** Text items among them. */
     textFound: number;
+    /** Nodes the user clicked that Express keeps out of the selection because they are locked. */
+    locked: number;
     /** Set when Express refused the change. */
     error?: string;
 }
