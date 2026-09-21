@@ -8,9 +8,8 @@ DAILY_LIMIT = "60"        # Claude requests per caller per day
 DAILY_SITE_LIMIT = "200"  # website reads per caller per day (these cost nothing but bandwidth)
 
 # Burst limit: 10 requests per minute per caller. Free on Workers, no setup needed.
-[[unsafe.bindings]]
+[[ratelimits]]
 name = "BURST"
-type = "ratelimit"
 namespace_id = "1001"
 simple = { limit = 10, period = 60 }
 

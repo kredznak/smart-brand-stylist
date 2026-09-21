@@ -144,13 +144,15 @@ try {
         const account = (who.match(/\b[0-9a-f]{32}\b/) ?? [""])[0];
         console.error(`
   Your Cloudflare account has no workers.dev subdomain yet, so there is nowhere
-  to publish to. This is a one-time account setup and has to be done in the
-  dashboard; wrangler has no command for it.
+  to publish to. This is a one-time account setup and cannot be done from
+  wrangler, which has no command for it.
 
-      https://dash.cloudflare.com/${account}/workers/onboarding
+  Open the Workers & Pages page once and Cloudflare creates the subdomain:
 
-  Pick any subdomain, then run this again. The Worker and its key are already
-  uploaded, so it will only need the last step.
+      https://dash.cloudflare.com/${account}/workers-and-pages
+
+  Then run this again. The Worker and its key are already uploaded, so only the
+  last step is left.
 `);
         process.exit(1);
     }

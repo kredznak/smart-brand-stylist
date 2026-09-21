@@ -6,7 +6,7 @@
 //
 // Before submitting to Adobe: deploy the server (see server/README.md) and paste
 // the URL wrangler prints into PRODUCTION_API_BASE below.
-const PRODUCTION_API_BASE = "https://smart-brand-stylist-api.CHANGE-ME.workers.dev";
+const PRODUCTION_API_BASE = "https://smart-brand-stylist-api.red-surf-5c86.workers.dev";
 
 const LOCAL_API_BASE = "http://localhost:8787";
 
