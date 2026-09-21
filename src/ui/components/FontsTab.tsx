@@ -1,5 +1,6 @@
 import { settleSelection } from "../selection";
 import { withTimeout } from "../timeout";
+import { log } from "../diagnostics";
 import React, { useEffect, useMemo, useState } from "react";
 import { AuditFont, BrandFonts, FontInfo, SandboxProxy } from "../../shared/DocumentSandboxApi";
 import { suggestFonts } from "../api";
@@ -44,8 +45,10 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
 
     const pickFromSelection = (slot: "heading" | "body") =>
         run(async () => {
+            log(`pick ${slot}: click`);
             await settleSelection(sandboxProxy);
             const font = await sandboxProxy.getSelectionFont();
+            log(`pick ${slot}: getSelectionFont -> ${JSON.stringify(font)}`);
             if (!font) return "Select some text on the canvas first.";
             onChange({ ...fonts, [slot]: font });
             setAudit(null);
@@ -57,12 +60,15 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
             const font = fonts[slot];
             if (!font) return `Choose a ${slot} font first.`;
             setApplying(slot);
+            log(`apply ${slot}: click, font ${font.postscriptName}`);
             let result;
             try {
                 const loaded = await withTimeout(sandboxProxy.loadFont(font.postscriptName), 10000, "Express took too long to load the font. Try again.");
+                log(`apply ${slot}: loadFont -> ${loaded}`);
                 if (!loaded) return `${font.family} isn't available in this Express account.`;
                 await settleSelection(sandboxProxy);
                 result = await withTimeout(sandboxProxy.applyFontToSelection(font.postscriptName), 10000, "Express took too long to change the text. Try again.");
+                log(`apply ${slot}: result ${JSON.stringify(result)}`);
             } finally {
                 setApplying(null);
             }
