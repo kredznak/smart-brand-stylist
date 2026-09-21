@@ -80,6 +80,27 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             .catch(() => setStaleSandbox(true)); // an older sandbox has no build() at all
     }, []);
 
+    // What Express currently reports as selected, shown live, so it is clear before an
+    // "apply to selection" button is pressed whether it will find anything.
+    const [selectionInfo, setSelectionInfo] = useState<{ selected: number; locked: number; text: number } | null>(null);
+    useEffect(() => {
+        if (step !== "kit") return;
+        let cancelled = false;
+        const poll = () =>
+            sandboxProxy
+                .describeSelection()
+                .then(info => {
+                    if (!cancelled) setSelectionInfo(info);
+                })
+                .catch(() => undefined);
+        poll();
+        const timer = setInterval(poll, 500);
+        return () => {
+            cancelled = true;
+            clearInterval(timer);
+        };
+    }, [step]);
+
     // Returning users go straight to their saved kit.
     useEffect(() => {
         store
@@ -228,6 +249,14 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
     }
 
     const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+    const selectionLabel = (() => {
+        if (!selectionInfo) return "";
+        if (selectionInfo.text > 0) return `On canvas: ${plural(selectionInfo.text, "text item")} selected`;
+        if (selectionInfo.selected > 0) return `On canvas: ${plural(selectionInfo.selected, "item")} selected, none of it text`;
+        if (selectionInfo.locked > 0) return "On canvas: the selected item is locked, so it can't be changed";
+        return "On canvas: nothing selected";
+    })();
 
     const applyToSelection = (hex: string) =>
         run(async () => {
@@ -442,6 +471,9 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
                     </button>
                 ))}
             </div>
+            <p className="hint selectionHint" aria-live="polite">
+                {selectionLabel}
+            </p>
 
             {tab === "kit" && (
                 <section>

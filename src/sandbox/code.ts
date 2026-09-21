@@ -150,8 +150,13 @@ function start(): void {
         build: () => BUILD,
 
         describeSelection() {
-            const selected = editor.context.selection.length;
-            return { selected, locked: Math.max(0, editor.context.selectionIncludingNonEditable.length - selected) };
+            const selection = editor.context.selection;
+            const selected = selection.length;
+            return {
+                selected,
+                locked: Math.max(0, editor.context.selectionIncludingNonEditable.length - selected),
+                text: collectTextModels(selection).length
+            };
         },
 
         auditPage(paletteHex: string[], tolerance: number): AuditResult {

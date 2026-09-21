@@ -40,6 +40,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 .fileName { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hint { margin: 0; font-size: 12px; line-height: 1.4; color: var(--muted); }
 .fieldLabel { font-weight: 700; }
+.selectionHint { min-height: 16px; }
+.selectionHint::before { content: "\25CF "; font-size: 9px; vertical-align: 1px; }
 .or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
 .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 

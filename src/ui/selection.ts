@@ -1,7 +1,7 @@
 import { SandboxProxy } from "../shared/DocumentSandboxApi";
 
-const ATTEMPTS = 6;
-const GAP_MS = 60;
+const ATTEMPTS = 10;
+const GAP_MS = 80;
 
 /**
  * Waits for Express to report a selection before a selection-dependent action runs.
