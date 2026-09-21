@@ -244,21 +244,27 @@ function start(): void {
 
         async applyFontToSelection(postscriptName: string): Promise<ApplyFontResult> {
             const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0 };
+
+            // Read the selection before anything is awaited. Pressing a button in the panel
+            // moves focus off the canvas, and Express clears the selection once that settles,
+            // so by the time the font has loaded there is nothing left to read. Holding the
+            // models across the wait is what keepContentActiveDuringAsync is for.
+            const selection = editor.context.selection;
+            result.selected = selection.length;
+            const models = collectTextModels(selection);
+            result.textFound = models.length;
+            if (models.length === 0) return result;
+
             await editor.keepContentActiveDuringAsync(
                 editor.context.currentPage,
                 () => loadFonts([postscriptName]),
                 loaded => {
-                    const selection = editor.context.selection;
-                    result.selected = selection.length;
-
                     const font = loaded.get(postscriptName);
                     if (!font) {
                         result.error = `${postscriptName} is not available to this Express account.`;
                         return;
                     }
 
-                    const models = collectTextModels(selection);
-                    result.textFound = models.length;
                     for (const model of models) {
                         try {
                             model.applyCharacterStyles({ font });
