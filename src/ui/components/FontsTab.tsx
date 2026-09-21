@@ -52,9 +52,12 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
         run(async () => {
             const font = fonts[slot];
             if (!font) return `Choose a ${slot} font first.`;
-            const changed = await sandboxProxy.applyFontToSelection(font.postscriptName);
-            if (changed === -1) return `${font.family} isn't available in your Express account.`;
-            return changed === 0 ? "Select some text on the canvas first." : `Applied ${font.family} to ${plural(changed, "text item")}.`;
+            const { changed, selected, textFound, error } = await sandboxProxy.applyFontToSelection(font.postscriptName);
+            if (changed > 0) return `Applied ${font.family} to ${plural(changed, "text item")}.`;
+            if (error) return error;
+            if (selected === 0) return "Select some text on the canvas first, then press this again.";
+            if (textFound === 0) return `That selection has no text in it. Click a text box, not a shape or image.`;
+            return `${font.family} could not be applied. The text may be locked.`;
         });
 
     const askAi = () =>

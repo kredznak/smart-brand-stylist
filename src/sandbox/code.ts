@@ -2,6 +2,7 @@ import addOnSandboxSdk from "add-on-sdk-document-sandbox";
 import { AvailableFont, Color, colorUtils, constants, editor, fonts } from "express-document-sdk";
 import { BrandColor, nearestBrandColor, normalizeHex, readableTextOn } from "../shared/color";
 import {
+    ApplyFontResult,
     AuditColor,
     AuditFont,
     AuditResult,
@@ -241,28 +242,36 @@ function start(): void {
             return null;
         },
 
-        async applyFontToSelection(postscriptName: string): Promise<number> {
-            let changed = 0;
+        async applyFontToSelection(postscriptName: string): Promise<ApplyFontResult> {
+            const result: ApplyFontResult = { changed: 0, selected: 0, textFound: 0 };
             await editor.keepContentActiveDuringAsync(
                 editor.context.currentPage,
                 () => loadFonts([postscriptName]),
                 loaded => {
+                    const selection = editor.context.selection;
+                    result.selected = selection.length;
+
                     const font = loaded.get(postscriptName);
                     if (!font) {
-                        changed = -1;
+                        result.error = `${postscriptName} is not available to this Express account.`;
                         return;
                     }
-                    for (const model of collectTextModels(editor.context.selection)) {
+
+                    const models = collectTextModels(selection);
+                    result.textFound = models.length;
+                    for (const model of models) {
                         try {
                             model.applyCharacterStyles({ font });
-                            changed++;
+                            result.changed++;
                         } catch (e) {
+                            // Report it rather than let it look like nothing was selected.
+                            result.error = e instanceof Error ? e.message : String(e);
                             console.log("Could not change the font of a text item:", e);
                         }
                     }
                 }
             );
-            return changed;
+            return result;
         },
 
         auditFonts(brandFamilies: string[]): AuditFont[] {

@@ -38,6 +38,22 @@ export interface TextStyle {
     fontSize?: number;
 }
 
+/**
+ * Why applying a font did or did not work. "Nothing changed" has several very
+ * different causes and they need different advice, so each is reported separately
+ * rather than collapsed into a count of zero.
+ */
+export interface ApplyFontResult {
+    /** Text items that got the font. */
+    changed: number;
+    /** Nodes selected on the canvas, whatever their kind. */
+    selected: number;
+    /** Text items among them. */
+    textFound: number;
+    /** Set when Express refused the change. */
+    error?: string;
+}
+
 // Everything the document sandbox (code.ts) exposes to the panel UI.
 export interface DocumentSandboxApi {
     auditPage(paletteHex: string[], tolerance: number): AuditResult;
@@ -49,8 +65,7 @@ export interface DocumentSandboxApi {
     getAvailableFonts(postscriptNames: string[]): Promise<FontInfo[]>;
     /** Font of the first selected text, so users can pick a brand font straight from the canvas. */
     getSelectionFont(): FontInfo | null;
-    /** Returns how many text items changed, or -1 if the font is not available. */
-    applyFontToSelection(postscriptName: string): Promise<number>;
+    applyFontToSelection(postscriptName: string): Promise<ApplyFontResult>;
     auditFonts(brandFamilies: string[]): AuditFont[];
     /** Large text gets the heading font, the rest gets the body font. Returns runs changed. */
     fixOffBrandFonts(fonts: BrandFonts): Promise<number>;
