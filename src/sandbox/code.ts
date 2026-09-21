@@ -160,10 +160,17 @@ const fontCache = new Map<string, AvailableFont>();
  * in, and that opt-in is not allowed in a distributed add-on, so its absence must cost
  * nothing more than not being able to say "that text is locked".
  */
+let lockedCountAvailable = true;
+
 function lockedCount(selected: number): number {
+    // The panel polls the selection twice a second, so once this API has refused it must
+    // not be called again: every call throws, and a swallowed throw twice a second is
+    // both wasted work and noise in the console.
+    if (!lockedCountAvailable) return 0;
     try {
         return Math.max(0, editor.context.selectionIncludingNonEditable.length - selected);
     } catch {
+        lockedCountAvailable = false;
         return 0;
     }
 }
