@@ -100,9 +100,26 @@ if (secrets.some(s => s.name === "ANTHROPIC_API_KEY")) {
 `);
         process.exit(1);
     }
+    // Falling back to the development key is a decision, not a default: it puts the key
+    // you use locally behind a public URL, so revoking the public one breaks local work.
+    if (source === "server/.dev.vars" && !process.argv.includes("--allow-dev-key")) {
+        console.error(`
+  Refusing to put your development key on a public server.
+
+  Give the deployed server its own key, so it can be revoked on its own:
+
+      1. Make a new key at https://console.anthropic.com (Settings > API keys)
+      2. cp .prod.vars.example .prod.vars   and paste it in
+      3. npm run release
+
+  If you really do want to use the development key, run:
+
+      npm run release -- --allow-dev-key
+`);
+        process.exit(1);
+    }
     if (source === "server/.dev.vars") {
-        console.warn("  note: using your local development key, because there is no server/.prod.vars.");
-        console.warn("        A separate key would let you revoke the public one on its own.");
+        console.warn("  warning: using your local development key on a public server.");
     }
     wrangler(["secret", "put", "ANTHROPIC_API_KEY"], { input: key }); // never printed
     done(`uploaded from ${source}`);
