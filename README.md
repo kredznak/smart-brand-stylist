@@ -21,7 +21,7 @@ The first `npm run start` asks to set up a local SSL certificate. Choose **Autom
 3. In the left rail click **Add-ons**, switch on **Add-on Development** (top right of that panel), then **Test your local add-on**.
 4. Keep the URL as `https://localhost:5241`, tick the checkbox, and click **Connect**.
 
-Edits you save in `src/` reload automatically.
+Edits you save in `src/` reload the panel automatically. The document sandbox (`src/sandbox/code.ts`) does not always reload with it, even after a page refresh; when that happens the panel shows a red notice that Express is running an older version. Toggle **Test your local add-on** off and on again (or click **Connect** again) to force it.
 
 ## Where things are
 
