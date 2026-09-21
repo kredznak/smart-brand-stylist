@@ -41,7 +41,15 @@ That opens a browser. Then:
 npm run release
 ```
 
-which creates the `USAGE` store and writes its id into `wrangler.toml`, uploads the key from `.dev.vars` as a secret, deploys, and sets `PRODUCTION_API_BASE` in `src/ui/config.ts` to the URL it got back. Then rebuild the add-on from the project root with `npm run build`, and commit the two changed files.
+which creates the `USAGE` store and writes its id into `wrangler.toml`, uploads your API key as a secret, deploys, and sets `PRODUCTION_API_BASE` in `src/ui/config.ts` to the URL it got back.
+
+Give the deployed server **its own API key**, so the public one can be revoked without breaking your local work. Make a second key at https://console.anthropic.com, then:
+
+```bash
+cp .prod.vars.example .prod.vars
+```
+
+and paste it in. `.prod.vars` is gitignored, like `.dev.vars`. The script prefers `ANTHROPIC_API_KEY` from your shell, then `.prod.vars`, then `.dev.vars`, and warns if it falls back to your development key. Then rebuild the add-on from the project root with `npm run build`, and commit the two changed files.
 
 Run it as often as you like: anything already done is detected and left alone.
 
@@ -74,7 +82,9 @@ The usage limits above are per caller, so enough callers can still add up. Put a
 1. Go to https://console.anthropic.com > **Settings** > **Limits**.
 2. Set a **monthly spend limit**. Start low; you can raise it once you see real usage.
 3. On the same page set **email alerts** at a fraction of that, so you hear about it before the cap is hit rather than when suggestions stop working.
-4. Give this project its own **API key** (Settings > API keys) rather than reusing one, so you can revoke it without affecting anything else.
+4. Give the deployed server its own **API key** (Settings > API keys) in `server/.prod.vars`, rather than reusing your development one, so you can revoke the public key on its own.
+
+Do this **before** deploying, not after. Once the server is online, anyone with its address can spend against that key, and the per-caller limits in the Worker are per IP address.
 
 Worth knowing: when the cap is reached, Anthropic starts refusing requests and the add-on shows "The AI service returned an error. Please try again." Nothing breaks, but the AI features stop until the next month or until you raise the cap.
 

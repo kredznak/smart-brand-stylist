@@ -74,18 +74,38 @@ try {
 if (secrets.some(s => s.name === "ANTHROPIC_API_KEY")) {
     done("already uploaded");
 } else {
-    const devVars = join(here, ".dev.vars");
-    if (!existsSync(devVars)) {
-        console.error("\n  No key to upload. Either create server/.dev.vars with your key, or run:\n\n      cd server && npx wrangler secret put ANTHROPIC_API_KEY\n");
+    // The deployed server should have its own key, so it can be revoked without
+    // breaking local work. .prod.vars is preferred, .dev.vars is the fallback.
+    const readKey = file => {
+        const path = join(here, file);
+        if (!existsSync(path)) return null;
+        const value = readFileSync(path, "utf8").match(/^ANTHROPIC_API_KEY\s*=\s*(.+)$/m)?.[1].trim();
+        return !value || value.startsWith("paste-your-") ? null : value;
+    };
+
+    const fromEnv = process.env.ANTHROPIC_API_KEY?.trim();
+    const source = fromEnv ? "the ANTHROPIC_API_KEY in your shell" : readKey(".prod.vars") ? "server/.prod.vars" : readKey(".dev.vars") ? "server/.dev.vars" : null;
+    const key = fromEnv || readKey(".prod.vars") || readKey(".dev.vars");
+
+    if (!key) {
+        console.error(`
+  No key to upload. Give the deployed server its own key, so you can revoke it
+  without breaking local development:
+
+      1. Make a new key at https://console.anthropic.com (Settings > API keys)
+      2. cp .prod.vars.example .prod.vars   and paste it in
+      3. npm run release
+
+  Or upload one by hand with: npx wrangler secret put ANTHROPIC_API_KEY
+`);
         process.exit(1);
     }
-    const key = readFileSync(devVars, "utf8").match(/^ANTHROPIC_API_KEY\s*=\s*(.+)$/m)?.[1].trim();
-    if (!key || key === "paste-your-key-here") {
-        console.error("\n  server/.dev.vars still has the placeholder key in it.\n");
-        process.exit(1);
+    if (source === "server/.dev.vars") {
+        console.warn("  note: using your local development key, because there is no server/.prod.vars.");
+        console.warn("        A separate key would let you revoke the public one on its own.");
     }
     wrangler(["secret", "put", "ANTHROPIC_API_KEY"], { input: key }); // never printed
-    done("uploaded from server/.dev.vars");
+    done(`uploaded from ${source}`);
 }
 
 // --- 4. deploy -----------------------------------------------------------------------

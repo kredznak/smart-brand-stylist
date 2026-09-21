@@ -1,0 +1,3 @@
+# The key the DEPLOYED server uses. Keep it separate from .dev.vars so this one
+# can be revoked without breaking local development. Never commit the real file.
+ANTHROPIC_API_KEY=paste-your-production-key-here
