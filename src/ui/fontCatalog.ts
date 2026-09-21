@@ -24,3 +24,25 @@ export const PAIRINGS: Pairing[] = [
 ];
 
 export const ALL_FONT_NAMES = [...new Set(PAIRINGS.flatMap(p => [p.heading, p.body]))];
+
+const compare = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+/**
+ * Catalog fonts matching the CSS families a website uses, keeping the order the
+ * site suggested. "Open Sans" on a page becomes "OpenSans-Regular" here.
+ */
+export function catalogNamesForFamilies(families: string[]): string[] {
+    const byFamily = new Map<string, string[]>();
+    for (const name of ALL_FONT_NAMES) {
+        const key = compare(name.split("-")[0]);
+        byFamily.set(key, [...(byFamily.get(key) ?? []), name]);
+    }
+
+    const matches: string[] = [];
+    for (const family of families) {
+        for (const name of byFamily.get(compare(family)) ?? []) {
+            if (!matches.includes(name)) matches.push(name);
+        }
+    }
+    return matches;
+}

@@ -36,3 +36,15 @@ export interface FontSuggestion {
 
 export const suggestFonts = (logo: string, pairings: { id: string; label: string; mood: string }[]) =>
     post<FontSuggestion>("/suggest-fonts", { logo, pairings });
+
+export interface SiteBrand {
+    url: string;
+    title: string;
+    colors: { hex: string; weight: number }[];
+    /** CSS font families seen on the page, most prominent first. */
+    fonts: { family: string; weight: number }[];
+    /** The site's icon as a data URL, when it had one we can use. */
+    icon: string | null;
+}
+
+export const analyzeSite = (url: string) => post<SiteBrand>("/analyze-site", { url });

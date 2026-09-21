@@ -1,6 +1,6 @@
 # Smart Brand Stylist
 
-An Adobe Express add-on: turn a logo into a brand kit (colors and fonts), get AI copy suggestions, and find and fix off-brand colors and fonts on the page.
+An Adobe Express add-on: turn a logo **or a website** into a brand kit (colors and fonts), get AI copy suggestions, and find and fix off-brand colors and fonts on the page.
 
 ## Run it (first time)
 
@@ -31,9 +31,10 @@ Edits you save in `src/` reload automatically.
 | `src/ui/components/FontsTab.tsx` | Brand fonts, pairings, font audit |
 | `src/ui/components/CopyTab.tsx` | AI copy suggestions |
 | `src/ui/extractColors.ts` | Pulls colors out of a logo, on the user's device |
+| `src/shared/color.ts` | Palette building shared by the logo and website paths |
 | `src/ui/fontCatalog.ts` | Suggested font pairings |
 | `src/ui/config.ts` | Address of the AI helper server |
-| `server/` | AI helper server (see `server/README.md`) |
+| `server/` | AI helper server, and the website reader (see `server/README.md`) |
 | `src/sandbox/code.ts` | Reads and edits the Express document |
 | `src/shared/color.ts` | Palette generation, color distance, contrast |
 | `src/shared/DocumentSandboxApi.ts` | The contract between the panel and the sandbox |

@@ -1,10 +1,9 @@
-import { BrandColor, colorDistance, hexToHsl, rgbToHex } from "../shared/color";
+import { BrandColor, colorDistance, MERGE_DISTANCE, rgbToHex, toBrandColors } from "../shared/color";
 
 // Reads a logo file in the browser and pulls out its main colors.
 // Everything happens on the user's device: the image is never uploaded anywhere.
 
 const SAMPLE_SIZE = 160; // longest edge used for analysis
-const MERGE_DISTANCE = 14; // Lab distance below which two colors count as the same
 const MIN_SHARE = 0.015; // ignore colors covering less than 1.5% of the logo
 const MAX_COLORS = 5;
 
@@ -116,15 +115,8 @@ export async function analyzeLogo(file: Blob): Promise<LogoAnalysis> {
     if (main.length === 0) main = candidates.slice(0, 1);
 
     // 4. The most colorful of the dominant colors leads; neutrals follow.
-    const vivid = (hex: string) => {
-        const [, s, l] = hexToHsl(hex);
-        return s > 25 && l > 12 && l < 90;
-    };
-    main.sort((a, b) => Number(vivid(b.hex)) - Number(vivid(a.hex)) || b.count - a.count);
-
-    const roles = ["Primary", "Secondary", "Accent", "Extra 1", "Extra 2"];
     return {
-        palette: main.map((c, i) => ({ role: roles[i], hex: c.hex })),
+        palette: toBrandColors(main.map(c => ({ hex: c.hex, weight: c.count })), MAX_COLORS),
         thumbnail: drawScaled(img, 256).toDataURL("image/png")
     };
 }

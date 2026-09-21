@@ -2,6 +2,10 @@
 
 The add-on's AI features (copy suggestions, matching fonts to a logo) call this small server, and the server calls Claude. This keeps your Anthropic API key out of the add-on, where anyone could read it.
 
+It also reads websites. When someone types their address on the upload screen, the panel cannot fetch the page itself — an add-on panel is a sandboxed iframe and the browser blocks it from reading another site — so this server visits the page and returns the colors and font families it found. `src/site.js` does that work; no AI and no API key are involved, so it keeps working before you add a key.
+
+Only public addresses are accepted. Loopback, private and link-local ranges are refused so the endpoint cannot be used to reach machines that the caller could not reach directly.
+
 ## Run it locally
 
 You need an Anthropic API key from https://console.anthropic.com (Settings > API keys).

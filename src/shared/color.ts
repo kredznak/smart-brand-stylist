@@ -151,3 +151,43 @@ export function contrastRatio(a: string, b: string): number {
 export function readableTextOn(hex: string): string {
     return contrastRatio(hex, "#FFFFFF") >= contrastRatio(hex, "#111111") ? "#FFFFFF" : "#111111";
 }
+
+/** Below this Lab distance two colors are the same brand color in all but rounding. */
+export const MERGE_DISTANCE = 14;
+
+const PALETTE_ROLES = ["Primary", "Secondary", "Accent", "Extra 1", "Extra 2"];
+
+/**
+ * Turns weighted color candidates into a brand palette: near-identical colors fold
+ * together, the most colorful lead, and each keeps its role name. Shared so a palette
+ * read from a website looks the same as one read from a logo.
+ */
+export function toBrandColors(
+    entries: { hex: string; weight: number }[],
+    max = PALETTE_ROLES.length,
+    vividBoost?: number
+): BrandColor[] {
+    const merged: { hex: string; weight: number }[] = [];
+    for (const entry of [...entries].sort((a, b) => b.weight - a.weight)) {
+        const hex = normalizeHex(entry.hex);
+        if (!hex) continue;
+        const match = merged.find(m => colorDistance(m.hex, hex) < MERGE_DISTANCE);
+        if (match) match.weight += entry.weight;
+        else merged.push({ hex, weight: entry.weight });
+    }
+
+    const vivid = (hex: string) => {
+        const [, s, l] = hexToHsl(hex);
+        return s > 25 && l > 12 && l < 90;
+    };
+
+    merged.sort((a, b) => {
+        // Without a boost, any colorful candidate outranks any neutral one. That suits a
+        // logo, where the colored mark is the brand however little of it there is. A web
+        // page has hundreds of incidental colors, so there how much a color is used has
+        // to count too, or a stray highlight beats the real brand color.
+        if (vividBoost === undefined) return Number(vivid(b.hex)) - Number(vivid(a.hex)) || b.weight - a.weight;
+        return b.weight * (vivid(b.hex) ? vividBoost : 1) - a.weight * (vivid(a.hex) ? vividBoost : 1);
+    });
+    return merged.slice(0, max).map((c, i) => ({ role: PALETTE_ROLES[i], hex: c.hex }));
+}

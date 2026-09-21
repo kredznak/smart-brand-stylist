@@ -35,6 +35,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 .fileButton { height: 28px; padding: 0 12px; border: 0; border-radius: 4px; background: #d9d9de; color: #17171c; font-weight: 600; flex: none; }
 .fileName { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hint { margin: 0; font-size: 12px; line-height: 1.4; color: var(--muted); }
+.fieldLabel { font-weight: 700; }
+.or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
 .tabs { display: flex; border-bottom: 1px solid var(--line); }
 .tab { flex: 1; padding: 8px 0; border: 0; background: none; font-weight: 700; color: var(--muted); border-bottom: 2px solid transparent; }

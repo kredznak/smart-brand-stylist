@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BrandColor, generatePalette, Harmony, HARMONIES, normalizeHex, readableTextOn } from "../../shared/color";
+import { BrandColor, generatePalette, Harmony, HARMONIES, normalizeHex, readableTextOn, toBrandColors } from "../../shared/color";
 import { AuditResult, BrandFonts, SandboxProxy } from "../../shared/DocumentSandboxApi";
+import { analyzeSite } from "../api";
 import { analyzeLogo, dataUrlToBlob } from "../extractColors";
+import { catalogNamesForFamilies } from "../fontCatalog";
 import CopyTab, { BrandVoice } from "./CopyTab";
 import FontsTab from "./FontsTab";
 import "./App.css";
@@ -9,6 +11,8 @@ import "./App.css";
 import { AddOnSDKAPI } from "https://new.express.adobe.com/static/add-on-sdk/sdk.js";
 
 const STORAGE_KEY = "brandKit";
+/** How far a colorful candidate outranks a neutral one when reading a web page. */
+const SITE_VIVID_BOOST = 4;
 const DEFAULT_BASE = "#5258E4";
 
 interface SavedKit {
@@ -19,6 +23,15 @@ interface SavedKit {
     tolerance: number;
     fonts?: BrandFonts;
     voice?: BrandVoice;
+}
+
+interface Draft {
+    palette: BrandColor[];
+    logo: string | null;
+    /** CSS families the site used, most prominent first. Empty when read from a logo. */
+    fonts: string[];
+    /** Where this came from, shown on the results screen. */
+    source: string;
 }
 
 type Step = "loading" | "onboarding" | "upload" | "results" | "kit";
@@ -48,7 +61,8 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [analyzing, setAnalyzing] = useState(false);
-    const [draft, setDraft] = useState<{ palette: BrandColor[]; logo: string } | null>(null);
+    const [draft, setDraft] = useState<Draft | null>(null);
+    const [siteUrl, setSiteUrl] = useState("");
     const fileInput = useRef<HTMLInputElement>(null);
 
     const store = addOnUISdk.instance.clientStorage;
@@ -109,7 +123,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             setAnalyzing(true);
             try {
                 const result = await analyzeLogo(file);
-                setDraft({ palette: result.palette, logo: result.thumbnail });
+                setDraft({ palette: result.palette, logo: result.thumbnail, fonts: [], source: "your logo" });
                 setStep("results");
                 return "";
             } finally {
@@ -117,17 +131,56 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             }
         });
 
-    function addBrand() {
-        if (!draft) return;
-        setPalette(draft.palette);
-        setLogo(draft.logo);
-        setAudit(null);
-        setDraft(null);
-        setFile(null);
-        setTab("kit");
-        setStep("kit");
-        setStatus("Brand added. Click a color to apply it to your selection.");
-    }
+    // The panel is a sandboxed iframe and cannot fetch another origin, so the
+    // helper server visits the page and sends back what it found.
+    const analyzeUrl = () =>
+        run(async () => {
+            if (!siteUrl.trim()) return "Enter a website address first.";
+            setAnalyzing(true);
+            try {
+                const site = await analyzeSite(siteUrl.trim());
+                const palette = toBrandColors(site.colors, undefined, SITE_VIVID_BOOST);
+                if (palette.length === 0) return "No colors could be read from that site.";
+                setDraft({
+                    palette,
+                    logo: site.icon,
+                    fonts: site.fonts.map(f => f.family),
+                    source: new URL(site.url).hostname.replace(/^www\./, "")
+                });
+                setStep("results");
+                return "";
+            } finally {
+                setAnalyzing(false);
+            }
+        });
+
+    const addBrand = () =>
+        run(async () => {
+            if (!draft) return "";
+            setPalette(draft.palette);
+            setLogo(draft.logo);
+            setAudit(null);
+
+            // A site's fonts are CSS family names, so only those Express also has can be adopted.
+            let adopted: string | null = null;
+            const candidates = catalogNamesForFamilies(draft.fonts);
+            if (candidates.length > 0) {
+                const available = await sandboxProxy.getAvailableFonts(candidates).catch(() => []);
+                if (available.length > 0) {
+                    setBrandFonts({ heading: available[0], body: available[1] ?? available[0] });
+                    adopted = available[0].family;
+                }
+            }
+
+            setDraft(null);
+            setFile(null);
+            setSiteUrl("");
+            setTab("kit");
+            setStep("kit");
+            return adopted
+                ? `Brand added, with ${adopted} as your heading font.`
+                : "Brand added. Click a color to apply it to your selection.";
+        });
 
     function startFromColor() {
         setPalette(generatePalette(base, harmony));
@@ -140,6 +193,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
     function newBrand() {
         setFile(null);
+        setSiteUrl("");
         setDraft(null);
         setStatus("");
         setStep("upload");
@@ -200,6 +254,10 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
     const offBrandCount = audit ? audit.colors.filter(c => !c.onBrand).length : 0;
 
+    // A logo takes precedence when both halves of the upload screen are filled in.
+    const canAnalyze = Boolean(file || siteUrl.trim());
+    const analyzeBrand = () => (file ? analyze() : analyzeUrl());
+
     // --- Screens -------------------------------------------------------------------------------
 
     if (step === "loading") return <div className="screen" />;
@@ -223,7 +281,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             <div className="screen">
                 <header>
                     <h1>Smart Brand Stylist</h1>
-                    <p>Upload your logo</p>
+                    <p>Start from your logo or your website</p>
                 </header>
 
                 <div className="body">
@@ -249,6 +307,33 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
                         <span className="fileName">{file ? file.name : "No file chosen"}</span>
                     </div>
                     <p className="hint">PNG, JPG, SVG or WebP. Your logo is analyzed on your device and is never uploaded.</p>
+
+                    <div className="or">
+                        <span>or</span>
+                    </div>
+
+                    <label className="fieldLabel" htmlFor="siteUrl">
+                        Use your website
+                    </label>
+                    <input
+                        id="siteUrl"
+                        className="text"
+                        type="url"
+                        inputMode="url"
+                        autoComplete="url"
+                        spellCheck={false}
+                        placeholder="yourbrand.com"
+                        value={siteUrl}
+                        onChange={e => {
+                            setSiteUrl(e.target.value);
+                            setStatus("");
+                        }}
+                        onKeyDown={e => {
+                            if (e.key === "Enter" && canAnalyze && !analyzing) analyzeBrand();
+                        }}
+                    />
+                    <p className="hint">We read the page's colors and fonts. The address is sent to the AI helper server, which visits the page.</p>
+
                     <button className="link" onClick={startFromColor}>
                         No logo? Start from a color instead
                     </button>
@@ -258,7 +343,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
                     {status}
                 </p>
                 <div className="actions">
-                    <button className="primary" disabled={!file || analyzing} onClick={analyze}>
+                    <button className="primary" disabled={!canAnalyze || analyzing} onClick={analyzeBrand}>
                         {analyzing ? "Analyzing…" : "Analyze brand"}
                     </button>
                     {palette.length > 0 && (
@@ -276,12 +361,12 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             <div className="screen">
                 <header>
                     <h1>Brand style</h1>
-                    <p>Here is what we found</p>
+                    <p>Here is what we found in {draft.source}</p>
                 </header>
 
                 <div className="body">
                     <div className="logoCard">
-                        <img src={draft.logo} alt="Your logo" />
+                        {draft.logo && <img src={draft.logo} alt={`${draft.source} logo`} />}
                         <div className="resultSwatches">
                             {draft.palette.map(c => (
                                 <span key={c.role} className="resultSwatch" style={{ background: c.hex }} title={`${c.role} ${c.hex}`} />
@@ -297,6 +382,13 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
                             </li>
                         ))}
                     </ul>
+
+                    {draft.fonts.length > 0 && (
+                        <>
+                            <span className="fieldLabel">Fonts on the site</span>
+                            <p className="hint">{draft.fonts.slice(0, 4).join(", ")}</p>
+                        </>
+                    )}
                 </div>
 
                 <div className="actions">

@@ -1,6 +1,8 @@
 // Smart Brand Stylist: AI helper server (Cloudflare Worker).
 // Keeps the Anthropic API key off the add-on. The add-on calls this server, this server calls Claude.
 
+import { readSiteBrand } from "./site.js";
+
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-haiku-4-5";
 
@@ -103,13 +105,60 @@ async function suggestFonts(body, env) {
     return json({ pairingId, reason: clean(result.reason, 200) });
 }
 
+// This endpoint fetches a URL the caller chose, so it must not become a way to
+// reach things the caller could not reach themselves.
+function publicUrl(raw) {
+    let url;
+    try {
+        url = new URL(/^[a-z]+:\/\//i.test(raw) ? raw : "https://" + raw);
+    } catch {
+        return null;
+    }
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+
+    const host = url.hostname.toLowerCase();
+    if (host === "localhost" || /\.(localhost|local|internal|home|lan)$/.test(host)) return null;
+    if (host.includes(":")) return null; // IPv6 literal, which covers ::1 and unique-local
+
+    const octets = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+    if (octets) {
+        const [a, b] = octets.slice(1).map(Number);
+        if (octets.slice(1).some(n => Number(n) > 255)) return null;
+        // loopback, private, link-local (cloud metadata lives at 169.254.169.254) and multicast
+        if (a === 0 || a === 10 || a === 127 || a >= 224) return null;
+        if (a === 172 && b >= 16 && b <= 31) return null;
+        if (a === 192 && b === 168) return null;
+        if (a === 169 && b === 254) return null;
+    }
+    return url;
+}
+
+async function analyzeSite(body) {
+    const url = publicUrl(clean(body.url, 300));
+    if (!url) return json({ error: "Enter a full website address, like example.com." }, 400);
+
+    let brand;
+    try {
+        brand = await readSiteBrand(url.href);
+    } catch (e) {
+        console.log("Site analysis failed", url.href, e);
+        const timedOut = e instanceof Error && e.name === "TimeoutError";
+        return json({ error: timedOut ? "That site took too long to respond." : e.message || "That site could not be read." }, 502);
+    }
+
+    if (brand.colors.length === 0 && brand.fonts.length === 0) {
+        return json({ error: "No colors or fonts could be read from that page." }, 422);
+    }
+    return json({ url: url.href, ...brand });
+}
+
 export default {
     async fetch(request, env) {
         if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
         if (request.method !== "POST") return json({ error: "Use POST." }, 405);
 
         const { pathname } = new URL(request.url);
-        const handler = { "/suggest-copy": suggestCopy, "/suggest-fonts": suggestFonts }[pathname];
+        const handler = { "/suggest-copy": suggestCopy, "/suggest-fonts": suggestFonts, "/analyze-site": analyzeSite }[pathname];
         if (!handler) return json({ error: "Not found." }, 404);
 
         try {
