@@ -62,7 +62,8 @@ const FontsTab = ({ sandboxProxy, fonts, logo, onChange, run }: Props) => {
             if (changed > 0) return `Applied ${font.family} to ${plural(changed, "text item")}.`;
             if (error) return error;
             if (selected === 0 && locked > 0) return "That text box is locked, so Express won't let the add-on change it. Unlock it, then press Apply again.";
-            if (selected === 0) return "Nothing is selected on the canvas. Click the text box once so it shows handles (don't double-click into the text), then press Apply.";
+            // TODO remove the counts once the selection problem is understood; they are for diagnosis.
+            if (selected === 0) return `Nothing is selected on the canvas. Click the text box once so it shows handles (don't double-click into the text), then press Apply. (Express reported ${selected} selected, ${locked} locked.)`;
             if (textFound === 0) return "That selection has no text in it. Click a text box, not a shape or image.";
             return `${font.family} could not be applied to that text.`;
         });

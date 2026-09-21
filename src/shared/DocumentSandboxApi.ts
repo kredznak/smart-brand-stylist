@@ -58,6 +58,8 @@ export interface ApplyFontResult {
 
 // Everything the document sandbox (code.ts) exposes to the panel UI.
 export interface DocumentSandboxApi {
+    /** Build id of the running sandbox script, so the panel can detect a stale one. */
+    build(): string;
     auditPage(paletteHex: string[], tolerance: number): AuditResult;
     fixOffBrandColors(paletteHex: string[], tolerance: number): number;
     applyColorToSelection(hex: string): number;

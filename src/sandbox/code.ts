@@ -1,5 +1,6 @@
 import addOnSandboxSdk from "add-on-sdk-document-sandbox";
 import { AvailableFont, Color, colorUtils, constants, editor, fonts } from "express-document-sdk";
+import { BUILD } from "../shared/build";
 import { BrandColor, nearestBrandColor, normalizeHex, readableTextOn } from "../shared/color";
 import {
     ApplyFontResult,
@@ -146,6 +147,8 @@ function pageRoots(): Iterable<any> {
 
 function start(): void {
     const sandboxApi: DocumentSandboxApi = {
+        build: () => BUILD,
+
         auditPage(paletteHex: string[], tolerance: number): AuditResult {
             const { uses, scanned } = collectColorUses(pageRoots());
             const byHex = new Map<string, AuditColor>();

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BrandColor, generatePalette, Harmony, HARMONIES, normalizeHex, readableTextOn, toBrandColors } from "../../shared/color";
 import { AuditResult, BrandFonts, SandboxProxy } from "../../shared/DocumentSandboxApi";
+import { BUILD } from "../../shared/build";
 import { analyzeSite } from "../api";
 import { analyzeLogo, dataUrlToBlob } from "../extractColors";
 import { catalogNamesForFamilies } from "../fontCatalog";
@@ -67,6 +68,16 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
     const store = addOnUISdk.instance.clientStorage;
     const paletteHex = palette.map(c => c.hex);
+
+    // While developing, reloading the panel does not always reload the document sandbox,
+    // and an old sandbox answering a new panel produces confusing, wrong messages.
+    const [staleSandbox, setStaleSandbox] = useState(false);
+    useEffect(() => {
+        sandboxProxy
+            .build()
+            .then(build => setStaleSandbox(build !== BUILD))
+            .catch(() => setStaleSandbox(true)); // an older sandbox has no build() at all
+    }, []);
 
     // Returning users go straight to their saved kit.
     useEffect(() => {
@@ -407,6 +418,12 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
     return (
         <div className="screen">
+            {staleSandbox && (
+                <p className="notice" role="alert">
+                    Express is still running an older version of this add-on. Reload the whole page (Cmd/Ctrl+R), or
+                    reconnect it from the Add-on Development panel.
+                </p>
+            )}
             <div className="tabs" role="tablist">
                 {TABS.map(t => (
                     <button

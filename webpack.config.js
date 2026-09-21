@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
@@ -31,6 +32,7 @@ module.exports = {
         "express-document-sdk": "express-document-sdk"
     },
     plugins: [
+        new webpack.DefinePlugin({ __BUILD__: JSON.stringify(Date.now().toString(36)) }),
         new HtmlWebpackPlugin({
             template: "src/index.html",
             scriptLoading: "module",
