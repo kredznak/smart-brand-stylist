@@ -46,7 +46,13 @@ Edits you save in `src/` reload the panel automatically. The document sandbox (`
 npm run build && npm run smoke
 ```
 
-This drives the built panel in a headless browser with a stand-in for the Express SDK, presses every button on every tab, and fails if an action stops reporting what it did. It needs Chrome (set `CHROME` if it is not in the usual place).
+Three passes, each guarding a bug that actually shipped:
+
+1. **Experimental APIs.** Fails if `src/sandbox/code.ts` reads an Express API marked `@experimental`. Those throw "Experimental APIs are not supported" unless the manifest opts in, which a distributed add-on may not do. `allDescendants` was one, and it broke every action whose selection held a group or an image.
+2. **The sandbox proxy wrapper.** Fails if wrapping it breaks string conversion or makes it look like a promise.
+3. **The panel itself**, driven in a headless browser with a stand-in for the Express SDK: every button on every tab, failing if an action stops reporting what it did. Needs Chrome (set `CHROME` if it is not in the usual place).
+
+All three catch things that compile cleanly and pass a type check.
 
 It is here because this panel's real faults have all been runtime ones that a type check cannot see: a selection read a moment too late, a wrapper that swallowed `toString`, an Express API that throws unless a manifest flag is set. Every one of them looked the same from outside — a button that quietly did nothing.
 
