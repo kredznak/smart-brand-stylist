@@ -64,7 +64,7 @@ It is not a substitute for opening the add-on in Express. The stand-in answers i
 
 ## Privacy and running costs
 
-[`PRIVACY.md`](PRIVACY.md) is a complete privacy policy matching what the code actually does; Adobe asks for a public URL to one when you submit. `npm run privacy` renders it into `docs/` for GitHub Pages — edit the markdown, not the generated page. Usage limits, how to cap Anthropic spend, and what the server does and does not keep are all covered in [`server/README.md`](server/README.md).
+[`PRIVACY.md`](PRIVACY.md) is a complete privacy policy matching what the code actually does; Adobe asks for a public URL to one when you submit. It is published at [https://kredznak.github.io/smart-brand-stylist/](https://kredznak.github.io/smart-brand-stylist/); `npm run privacy` regenerates `docs/index.html` from the markdown, so edit `PRIVACY.md` and never the generated page. Usage limits, how to cap Anthropic spend, and what the server does and does not keep are all covered in [`server/README.md`](server/README.md).
 
 ## Package for submission
 

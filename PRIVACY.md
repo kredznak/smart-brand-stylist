@@ -66,4 +66,6 @@ If this add-on starts handling information differently, this policy will be upda
 
 ## Contact
 
-Questions about this policy can be sent to the contact address listed on the add-on's Adobe Express listing, or raised at https://github.com/kredznak/smart-brand-stylist/issues.
+This policy is published at https://kredznak.github.io/smart-brand-stylist/
+
+Questions about it can be sent to the contact address listed on the add-on's Adobe Express listing, or raised at https://github.com/kredznak/smart-brand-stylist/issues.
