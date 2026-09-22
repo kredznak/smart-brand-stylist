@@ -2,3 +2,7 @@
 dist/
 node_modules/
 dist.zip
+
+# Raw screen captures: big, and superseded by the processed 1360x800 versions.
+listing/screenshots/raw/*
+!listing/screenshots/raw/.gitkeep
