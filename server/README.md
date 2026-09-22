@@ -53,6 +53,19 @@ and paste it in. `.prod.vars` is gitignored, like `.dev.vars`. The script prefer
 
 Run it as often as you like: anything already done is detected and left alone.
 
+### Changing the key later
+
+`wrangler secret list` returns names, never values, so the script cannot tell a key you
+have just put in `.prod.vars` from the one already on the server — it sees the name is
+taken and leaves it alone. To replace it, say so:
+
+```bash
+npm run release -- --rotate-key
+```
+
+Without that flag a new key in `.prod.vars` is read, found to be unnecessary, and
+silently ignored, and the server keeps running the old one.
+
 It exists because two of those steps used to be copied by hand — the store id into `wrangler.toml`, and the deployed URL into `src/ui/config.ts`. Both fail silently when they go wrong, because the add-on still builds and only breaks once somebody uses it.
 
 Local testing keeps using `http://localhost:8787` whatever this is set to, so you never have to switch it back.

@@ -80,8 +80,11 @@ try {
 } catch {
     secrets = []; // no secrets yet on a Worker that has never deployed
 }
-if (secrets.some(s => s.name === "ANTHROPIC_API_KEY")) {
-    done("already uploaded");
+// Wrangler's secret list gives names, never values, so a key already up there cannot be
+// compared with the one on disk. Replacing it has to be asked for.
+const rotating = process.argv.includes("--rotate-key");
+if (secrets.some(s => s.name === "ANTHROPIC_API_KEY") && !rotating) {
+    done("already uploaded (run with --rotate-key to replace it)");
 } else {
     // The deployed server should have its own key, so it can be revoked without
     // breaking local work. .prod.vars is preferred, .dev.vars is the fallback.
@@ -131,7 +134,7 @@ if (secrets.some(s => s.name === "ANTHROPIC_API_KEY")) {
         console.warn("  warning: using your local development key on a public server.");
     }
     wrangler(["secret", "put", "ANTHROPIC_API_KEY"], { input: key }); // never printed
-    done(`uploaded from ${source}`);
+    done(`${rotating ? "replaced with the key" : "uploaded"} from ${source}`);
 }
 
 // --- 4. deploy -----------------------------------------------------------------------
