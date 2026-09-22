@@ -90,6 +90,10 @@ Worth knowing: when the cap is reached, Anthropic starts refusing requests and t
 
 ## Privacy policy
 
-Adobe asks for a privacy policy URL when you submit an add-on. There is a complete draft in [`PRIVACY.md`](../PRIVACY.md) at the root of this repository, written to match what the code actually does. Publish it somewhere public — GitHub Pages, or your own site — and give Adobe that URL.
+Adobe asks for a privacy policy URL when you submit an add-on. [`PRIVACY.md`](../PRIVACY.md) is the policy, written to match what the code actually does, and `npm run privacy` renders it into `docs/index.html` for publishing.
 
-Read it before you publish it. It is accurate as of this commit, and it will stop being accurate if you change what gets sent to the server, add analytics, or start storing anything. It is a starting point written by a developer, not legal advice.
+To put it online with GitHub Pages: repository **Settings > Pages**, source **Deploy from a branch**, branch `main`, folder `/docs`. The page appears at `https://<user>.github.io/smart-brand-stylist/` within a minute or two. Pages will only serve a private repository on a paid plan, so a private repo has to be made public first, or the policy hosted somewhere else.
+
+Edit `PRIVACY.md`, never `docs/index.html`: the second is generated from the first, so that the published policy and the one in the repository cannot drift apart. Re-run `npm run privacy` after editing.
+
+Read it before you publish it. It is accurate as of this commit, and stops being accurate if you change what is sent to the server, add analytics, or start storing anything. It was written by a developer, not a lawyer.
