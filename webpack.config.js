@@ -11,7 +11,8 @@ const sharedPath = path.resolve(__dirname, "./src/shared");
 
 module.exports = {
     mode: isEnvProduction ? "production" : "development",
-    devtool: "source-map",
+    // Source maps are two thirds of the packaged size and only help while developing.
+    devtool: isEnvProduction ? false : "source-map",
     entry: {
         index: "./src/ui/index.tsx",
         code: "./src/sandbox/code.ts"
