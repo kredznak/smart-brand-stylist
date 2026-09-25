@@ -20,14 +20,29 @@ look soft) or too far from 17:10 (it will sit in thick bars).
 
 Every shot uses the same document, so this is done once and all five come out consistent.
 
-**Use `src/logo.png` as the brand.** It is the add-on's own mark, so there is no question
-about using someone else's trademark in a store listing — which there would be if the
-screenshots showed a real company's logo or website being taken apart. Avoid typing a
-well-known domain into the website field for the same reason.
+**Use `listing/demo-brand/bookbit.png` as the brand.** It is an invented mark, so no real
+company's logo is being taken apart in a public store listing. Avoid typing a well-known
+domain into the website field for the same reason.
+
+Do not use `src/logo.png`, which the earlier version of this guide recommended. It is a
+single flat white shape on transparency, so the extractor finds exactly one near-white
+color: the palette comes out grey, the AI font pairing is judging a blank mark, and the
+audit has nothing meaningful to compare against. Three of the five shots would be wasted.
 
 1. Open a new Express document, something wide like a presentation or a social banner.
-2. Open the add-on, choose **Upload a logo**, and pick `src/logo.png`.
+2. Open the add-on, choose **Upload a logo**, and pick `listing/demo-brand/bookbit.png`.
 3. Let it analyse. You now have a palette and the Colors tab is showing.
+
+The palette that comes out is known, because the extractor was run against this file:
+
+| Role | Color | Share of the logo |
+| --- | --- | --- |
+| Primary | `#DF604E` coral | 16.2% |
+| Secondary | `#63B89A` green | 4.5% |
+| Accent | `#292032` near-black | 77.6% |
+
+Worth noticing in shot 2: the dark hexagon is 77.6% of the logo and still ranks third,
+because at 22% saturation it reads as neutral and the most colorful candidate leads.
 
 ## 2. Build a page worth photographing
 
@@ -36,13 +51,35 @@ An empty canvas makes a poor screenshot and makes shot 4 impossible.
 Put together something that looks like real work — a few headings, a paragraph, two or
 three shapes, maybe an image. Then, deliberately:
 
-- Give **two or three shapes colors that are not in the palette.** Not subtly off: pick
-  something clearly different, so the Audit tab has something to find and the before/after
-  is obvious to someone scrolling a store listing.
+- **Give three shapes these colors**, which were chosen by measuring them against the
+  palette above. One maps to each brand color, at a spread of distances, so the audit
+  shows both an obvious catch and a subtle one:
+
+  | Use this | It is | The audit will say it becomes | Distance |
+  | --- | --- | --- | --- |
+  | `#F5A623` | warm amber | `#DF604E` Primary | 49.9 — obviously wrong |
+  | `#4A7FD4` | a stock blue | `#292032` Accent | 55.2 — the commonest real mistake |
+  | `#1ABC9C` | turquoise | `#63B89A` Secondary | 13.4 — close enough to miss by eye |
+
 - Set **one text item to a font that is not your brand font**, so the Fonts tab scan has
   something to report.
 
 Shot 4 is the one that fails without this. It is worth doing first.
+
+### Two colors you will see flagged whether you plan for them or not
+
+The scan walks the artboard itself, not just what you put on it
+(`pageRoots()` in `src/sandbox/code.ts` returns `currentPage.artboards`, and each
+artboard's own fill is read). With a three-color palette holding no neutral:
+
+- **The white background is flagged**, 45.9 away, and its nearest brand color is the
+  green. Pressing **Fix** turns the page green. Capture the audit list, which is what
+  shot 4 is for, rather than pressing Fix and hoping.
+- **Default black text is flagged**, 19.5 away, and becomes `#292032`. That one is
+  harmless and arguably right, since `#292032` is the brand's near-black.
+
+Neither is a bug. A palette with no neutral in it has nothing better to offer. Keep white
+shapes off the page so the audit list stays short and readable in a screenshot.
 
 ## 3. Size the window
 
