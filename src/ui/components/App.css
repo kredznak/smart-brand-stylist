@@ -25,8 +25,12 @@ button { font: inherit; cursor: pointer; }
 .link { border: 0; background: none; color: var(--muted); text-decoration: underline; padding: 4px 0; align-self: center; }
 button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
-.logoCard { background: #ececf1; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.logoCard img { max-width: 100%; max-height: 180px; object-fit: contain; }
+.logoCard { background: #ececf1; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+/* The preview is only there to confirm you picked the right file, and the whole screen
+   scrolls as one column, so a fixed height pushes the Analyze button off the bottom in a
+   short panel. Capping it against the panel's own height keeps the button reachable
+   whatever height the user has dragged the panel to. */
+.logoCard img { max-width: 100%; max-height: min(180px, 16vh); object-fit: contain; }
 .logoCard.small { padding: 12px; }
 .logoCard.small img { max-height: 72px; }
 .resultSwatches { display: flex; gap: 10px; }
