@@ -8,9 +8,15 @@ DAILY_LIMIT = "60"        # Claude requests per caller per day
 DAILY_SITE_LIMIT = "200"  # website reads per caller per day (these cost nothing but bandwidth)
 
 # Burst limit: 10 requests per minute per caller. Free on Workers, no setup needed.
+# NOT ENFORCING in production as of 2026-09-25, cause unknown. The binding attaches
+# (wrangler reports "10 requests/60s, Rate Limit"), limit() is called and returns success
+# for every request — 58 from one IP in one colo, not one refused. Local dev refuses at
+# the eleventh, so the syntax is right. The id is off Cloudflare's example 1001 because
+# namespaces are shared account-wide; that change did not fix it either. Until this
+# works, DAILY_LIMIT below is the only cap, and it undercounts parallel requests.
 [[ratelimits]]
 name = "BURST"
-namespace_id = "1001"
+namespace_id = "20260925"
 simple = { limit = 10, period = 60 }
 
 # Daily limit counter. Before deploying, run `npx wrangler kv namespace create USAGE`

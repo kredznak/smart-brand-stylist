@@ -72,21 +72,29 @@ Local testing keeps using `http://localhost:8787` whatever this is set to, so yo
 
 ## Usage limits
 
-The add-on is free to its users, so every Claude call is paid for by whoever deploys this. Three limits keep that bill predictable, and all of them are already in the code.
+The add-on is free to its users, so every Claude call is paid for by whoever deploys this. Three limits are in the code to keep that bill predictable. Read the caveats below before relying on them: as of 2026-09-25 the burst limit does not enforce at all, and the daily counters undercount parallel requests. The ceiling that actually holds is the Anthropic spend limit in the next section.
 
 | Limit | Default | Where to change it |
 | --- | --- | --- |
-| Burst, per caller | 10 requests/minute | `[[unsafe.bindings]]` in `wrangler.toml` |
+| Burst, per caller | 10 requests/minute — **not enforcing, see below** | `[[ratelimits]]` in `wrangler.toml` |
 | Claude requests, per caller per day | 60 | `DAILY_LIMIT` in `wrangler.toml` |
 | Website reads, per caller per day | 200 | `DAILY_SITE_LIMIT` in `wrangler.toml` |
 
 Claude requests and website reads are counted separately, because reading a page costs nothing but bandwidth while asking Claude costs money. A day spent trying out websites therefore cannot use up the AI budget, and each refusal names the allowance that actually ran out.
 
-Callers are identified by IP address (`CF-Connecting-IP`). The daily counters live in the `USAGE` KV namespace under `<date>:<quota>:<ip>` and expire after 48 hours. The counter is read-then-write rather than atomic, so a simultaneous burst can overshoot a limit slightly; that is deliberate, since the alternative costs a durable object for no real benefit at this scale.
+Callers are identified by IP address (`CF-Connecting-IP`). The daily counters live in the `USAGE` KV namespace under `<date>:<quota>:<ip>` and expire after 48 hours. The counter is read-then-write rather than atomic, and the overshoot is not slight: thirty requests sent in parallel were measured incrementing it by one, because each read the same value before any of them wrote. Sequential traffic is counted exactly. Counting parallel traffic properly needs a durable object, which is a paid-plan feature.
 
 Requests that never reach a handler — unknown paths, CORS preflights — do not consume an allowance.
 
-If you want a layer that runs before the Worker does, add a Cloudflare WAF rate-limiting rule in the dashboard under **Security > WAF > Rate limiting rules**.
+### The burst limit does not enforce
+
+Measured on 2026-09-25 against the deployed Worker: 58 requests from one IP address inside one Cloudflare location, not one of them refused with a 429. The binding is not missing. `wrangler versions view` lists it as `env.BURST (10 requests/60s)  Rate Limit`, the runtime calls `limit()` without throwing, and it returns success every time. The same configuration refuses at the eleventh request under `npm run dev`, so the syntax is right. Changing `namespace_id` off Cloudflare's example `1001` made no difference.
+
+This has already failed once before, differently. The binding was first declared as `[[unsafe.bindings]]` with `type = "ratelimit"`, which also attached, also reported itself correctly, and also never refused anything. Treat a rate limit binding as unproven until you have watched it return a 429 from the deployed server; local dev enforced both broken versions quite happily, which is what made them look fine.
+
+A Cloudflare WAF rate-limiting rule runs before the Worker, but **it cannot protect a `workers.dev` URL**: that hostname belongs to Cloudflare's zone rather than yours, so zone WAF and rate-limiting rules are never evaluated for traffic to it. Using one means putting the Worker on a custom domain in your own Cloudflare account, which is also Cloudflare's advice for anything beyond a hobby project.
+
+Until one of those is in place, the Anthropic spend limit below is the only ceiling that actually holds.
 
 ## Cap your Anthropic spend
 
@@ -97,7 +105,7 @@ The usage limits above are per caller, so enough callers can still add up. Put a
 3. On the same page set **email alerts** at a fraction of that, so you hear about it before the cap is hit rather than when suggestions stop working.
 4. Give the deployed server its own **API key** (Settings > API keys) in `server/.prod.vars`, rather than reusing your development one, so you can revoke the public key on its own.
 
-Do this **before** deploying, not after. Once the server is online, anyone with its address can spend against that key, and the per-caller limits in the Worker are per IP address.
+Do this **before** deploying, not after. Once the server is online, anyone with its address can spend against that key. The per-caller limits in the Worker are per IP address and weaker than they look, so treat this as the real limit rather than a backstop.
 
 Worth knowing: when the cap is reached, Anthropic starts refusing requests and the add-on shows "The AI service returned an error. Please try again." Nothing breaks, but the AI features stop until the next month or until you raise the cap.
 
