@@ -215,8 +215,8 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             setTab("kit");
             setStep("kit");
             return adopted
-                ? `Brand added, with ${adopted} as your heading font.`
-                : "Brand added. Click a color to apply it to your selection.";
+                ? `Brand kit saved, with ${adopted} as your heading font.`
+                : "Brand kit saved. Click a color to apply it to your selection.";
         });
 
     function startFromColor() {
@@ -441,7 +441,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
 
                 <div className="actions">
                     <button className="primary" onClick={addBrand}>
-                        Add brand
+                        Save brand kit
                     </button>
                     <button className="ghost" onClick={newBrand}>
                         Cancel
