@@ -10,6 +10,7 @@
         "smoke": "node tools/smoke/sandbox-apis.test.mjs && node tools/smoke/guard.test.mjs && node tools/smoke/run.mjs",
         "privacy": "node tools/build-privacy.mjs",
         "pages": "node tools/build-privacy.mjs",
+        "safety": "node tools/content-safety.test.mjs",
         "screenshots": "node tools/screenshots.mjs"
     },
     "keywords": [
