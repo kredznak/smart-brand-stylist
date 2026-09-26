@@ -91,7 +91,19 @@ async function askClaude(env, system, content, maxTokens) {
     const text = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("");
     // The prompts ask for bare JSON; tolerate a code fence or stray prose around it.
     const match = text.match(/[\[{][\s\S]*[\]}]/);
-    if (!match) throw new Error("The AI reply could not be read. Please try again.");
+    if (!match) {
+        // Claude answers a brief it will not write copy for in prose, with no JSON in it.
+        // That is a refusal, not a fault, and telling the caller to try again sends them
+        // round a loop that cannot end. Say what happened and give it a 4xx.
+        if (text.trim()) {
+            const refused = new Error(
+                "The AI would not write copy for this brand description. Edit the description and try again."
+            );
+            refused.status = 422;
+            throw refused;
+        }
+        throw new Error("The AI reply could not be read. Please try again.");
+    }
     return JSON.parse(match[0]);
 }
 
@@ -225,7 +237,7 @@ export default {
         } catch (e) {
             console.log("Request failed:", e);
             const message = e instanceof SyntaxError ? "The AI reply could not be read. Please try again." : e.message;
-            return json({ error: message || "Something went wrong." }, 500);
+            return json({ error: message || "Something went wrong." }, e.status || 500);
         }
     }
 };
