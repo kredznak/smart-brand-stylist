@@ -10,12 +10,16 @@
 // too tall and hands the crop back to sips. That cost 50px off the bottom of a test
 // image before this was caught.
 //
+// It also strips the DEVELOPER MODE badge and the window focus border, which every
+// capture of an unpublished add-on picks up. See tools/lib/clean-capture.mjs.
+//
 // Put captures in listing/screenshots/raw/ and run: npm run screenshots
 
 import { execFileSync } from "node:child_process";
 import { readdirSync, mkdirSync, copyFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
+import { clean } from "./lib/clean-capture.mjs";
 
 const W = 1360;
 const H = 800;
@@ -64,6 +68,10 @@ for (const name of files) {
     const fitted = size(out);
     sips("--padToHeightWidth", String(H), String(W), "--padColor", PAD, out);
 
+    // Capturing an unpublished add-on always catches the DEVELOPER MODE badge, and
+    // often the window's focus border. Neither belongs in a store listing.
+    const removed = clean(out);
+
     const final = size(out);
     const bars = final.w - fitted.w + (final.h - fitted.h);
     const barPct = Math.round((bars / (final.w - fitted.w > 0 ? W : H)) * 100);
@@ -73,8 +81,13 @@ for (const name of files) {
     if (barPct > 15) { notes.push(`${barPct}% padding - recapture closer to 17:10`); warnings++; }
     if (final.w !== W || final.h !== H) { notes.push(`WRONG SIZE ${final.w}x${final.h}`); warnings++; }
 
+    const cleaned = [];
+    if (removed.badge) cleaned.push(`badge ${removed.badge.w}x${removed.badge.h}`);
+    if (removed.borderRows) cleaned.push(`${removed.borderRows} border rows`);
+    const scrubbed = cleaned.length ? `  removed ${cleaned.join(" + ")}` : "";
+
     const tag = notes.length ? `  <- ${notes.join("; ")}` : "";
-    console.log(`  ${name.padEnd(28)} ${String(raw.w).padStart(5)}x${String(raw.h).padEnd(5)} -> ${final.w}x${final.h}${tag}`);
+    console.log(`  ${name.padEnd(28)} ${String(raw.w).padStart(5)}x${String(raw.h).padEnd(5)} -> ${final.w}x${final.h}${scrubbed}${tag}`);
 }
 
 console.log(

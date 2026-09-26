@@ -124,23 +124,28 @@ appearance, and a floating panel with no canvas shows neither.
 - **Run `npm run screenshots` and read the warnings**, then open the results at full size
   and check nothing important sits in the padding.
 
-## The committed images are retouched, the raw ones are not
+## What the tool takes out, besides padding
 
-Two things are painted out of the files in `listing/screenshots/`, and neither can be
-avoided while capturing:
+Two things end up in every capture that a user of the published add-on would never
+see, so `npm run screenshots` removes them on the way through:
 
 - **The DEVELOPER MODE badge**, a blue chip in the middle of the Express toolbar. It is
-  there because add-on testing has to be switched on to run an unpublished add-on, so it
-  appears in every capture. It is not part of what a user of the published add-on sees.
-- **The window focus border**, a three or four pixel blue line the screen capture picks up
-  along one edge of the window.
+  on screen because add-on testing has to be enabled to run an unpublished add-on at
+  all, which is why it cannot simply be avoided while capturing.
+- **The window focus border**, a few pixels of blue along one edge of the window.
 
-Both are flat blocks of color on flat backgrounds, so the repaint samples the surrounding
-pixels row by row and is not detectable. Nothing about the add-on itself is altered.
+Both are flat color on flat color. The badge is repainted by sampling the toolbar
+either side of it, row by row rather than once, so the fill follows the bar -- which
+matters because the badge can sit flush against the top of the capture, where the rows
+above it are white padding and have to stay white. The Share button is blue too, and is
+left alone: the badge is picked out as the blue cluster nearest the middle of the bar.
 
-This matters because **`npm run screenshots` regenerates from `raw/` and puts both back**.
-The raw captures are deliberately left untouched, so they remain evidence of what was
-actually on screen. If you re-run the tool, the badge returns and has to be removed again.
+Nothing about the add-on's own interface is altered, and the files in `raw/` are never
+written to, so they stay as evidence of what was actually on screen. The code is in
+[`tools/lib/clean-capture.mjs`](../tools/lib/clean-capture.mjs).
+
+One gap: `raw/3. fonts.png` was lost, so that shot cannot be regenerated. The version in
+`listing/screenshots/` is the finished article. Recapture it if it ever needs changing.
 
 ## Why the tool exists
 
