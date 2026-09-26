@@ -28,7 +28,7 @@ Generated copy is not checked for trademark conflicts. If a suggested tagline or
 
 ## Privacy
 
-How the add-on handles your information is described in the privacy policy at https://kredznak.github.io/smart-brand-assistant/. In short: no accounts, no tracking, nothing you provide is stored by us, and the only data sent anywhere is what is needed for the feature you pressed.
+How the add-on handles your information is described in the privacy policy at https://kredznak.github.io/smart-brand-stylist/. In short: no accounts, no tracking, nothing you provide is stored by us, and the only data sent anywhere is what is needed for the feature you pressed.
 
 ## Third-party services
 
@@ -48,4 +48,4 @@ We may update the add-on, change or remove features, adjust usage limits, or sto
 
 ## Contact
 
-Questions about these terms can be sent to the contact address on the add-on's Adobe Express listing, or raised at https://github.com/kredznak/smart-brand-assistant/issues.
+Questions about these terms can be sent to the contact address on the add-on's Adobe Express listing, or raised at https://github.com/kredznak/smart-brand-stylist/issues.
