@@ -124,6 +124,24 @@ appearance, and a floating panel with no canvas shows neither.
 - **Run `npm run screenshots` and read the warnings**, then open the results at full size
   and check nothing important sits in the padding.
 
+## The committed images are retouched, the raw ones are not
+
+Two things are painted out of the files in `listing/screenshots/`, and neither can be
+avoided while capturing:
+
+- **The DEVELOPER MODE badge**, a blue chip in the middle of the Express toolbar. It is
+  there because add-on testing has to be switched on to run an unpublished add-on, so it
+  appears in every capture. It is not part of what a user of the published add-on sees.
+- **The window focus border**, a three or four pixel blue line the screen capture picks up
+  along one edge of the window.
+
+Both are flat blocks of color on flat backgrounds, so the repaint samples the surrounding
+pixels row by row and is not detectable. Nothing about the add-on itself is altered.
+
+This matters because **`npm run screenshots` regenerates from `raw/` and puts both back**.
+The raw captures are deliberately left untouched, so they remain evidence of what was
+actually on screen. If you re-run the tool, the badge returns and has to be removed again.
+
 ## Why the tool exists
 
 `sips --padToHeightWidth` crops instead of padding when the image is bigger than the
