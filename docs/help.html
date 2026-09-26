@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help for Smart Brand Stylist</title>
+<meta name="description" content="How to use the Smart Brand Stylist add-on for Adobe Express.">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --text: #1b1b1f; --muted: #5a5a66; --rule: #e3e3e8; --link: #2b53c8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17171c; --text: #ececf1; --muted: #a9a9b4; --rule: #33333d; --link: #9db4ff; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 42rem; margin: 0 auto; padding: 4rem 1.25rem 6rem; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 .5rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.3rem; margin: 2.75rem 0 .75rem; padding-top: 1.75rem; border-top: 1px solid var(--rule); letter-spacing: -0.005em; }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .4rem; }
+  p, li { margin: 0 0 1rem; }
+  ul { padding-left: 1.2rem; margin: 0 0 1rem; }
+  li { margin-bottom: .45rem; }
+  a { color: var(--link); }
+  a:hover { text-decoration: none; }
+  strong { font-weight: 650; }
+  p:first-of-type strong { color: var(--muted); font-weight: 500; }
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .9rem; }
+  @media (max-width: 30rem) { main { padding: 2.5rem 1.1rem 4rem; } h1 { font-size: 1.6rem; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Help for Smart Brand Stylist</h1>
+<p><strong>Last updated: 25 September 2026</strong></p>
+<p>Smart Brand Stylist is a free add-on for Adobe Express. It turns your logo or website into a brand kit, suggests copy, and finds off-brand colors and fonts on your page.</p>
+<h2>Getting started</h2>
+<ul>
+  <li>Open a design in Adobe Express, click Add-ons in the left rail, and open Smart Brand Stylist.</li>
+  <li>On the start screen, choose a logo file (PNG, JPG, SVG or WebP) or type your website address, then click Analyze brand.</li>
+  <li>Check the colors it found and click Add brand. Your brand kit is now saved and opens automatically next time.</li>
+  <li>No logo yet? Click "Start from a color instead" to build a palette from one color.</li>
+</ul>
+<h2>Colors tab</h2>
+<ul>
+  <li>Click any swatch to apply that color to whatever is selected on the canvas.</li>
+  <li>Edit a hex value to fine-tune a color.</li>
+  <li>Add palette to page places labelled swatches on the canvas. Add logo to page places your logo.</li>
+  <li>Analyze a different logo starts over with a new brand.</li>
+</ul>
+<h2>Fonts tab</h2>
+<ul>
+  <li>Choose a heading font and a body font. Pick a suggested pairing, or select text on the canvas that already uses the font you want and click "Use selected text's font".</li>
+  <li>Apply to selection puts the heading or body font on any selected text.</li>
+  <li>Match fonts to my logo (AI) sends your logo image to the AI service, which picks the pairing that suits it best.</li>
+  <li>Scan fonts on this page lists every font in use and flags the ones that are not your brand fonts. Fix changes them: large text gets the heading font, the rest gets the body font.</li>
+</ul>
+<h2>Copy tab</h2>
+<ul>
+  <li>Enter your brand name, a sentence about what you do and for whom, and a tone.</li>
+  <li>Choose what to write: a tagline, headline, button text, social caption or about blurb, then click Suggest copy.</li>
+  <li>Add to page places a suggestion on the canvas in your brand font and color. Replace selected text swaps it into a text box you have selected.</li>
+  <li>Suggestions are written by AI. Read them before you publish.</li>
+</ul>
+<h2>Audit tab</h2>
+<ul>
+  <li>Scan colors on this page lists every solid color on the page and marks each as on brand or off brand, with the nearest brand color.</li>
+  <li>The strictness slider controls how close a color must be to count as on brand.</li>
+  <li>Fix off-brand colors changes them all at once. Cmd+Z (Mac) or Ctrl+Z (Windows) undoes it.</li>
+</ul>
+<h2>Common questions</h2>
+<p><strong>Is my logo uploaded?</strong> No. Colors are read on your own computer. The logo image is only sent to the AI service if you press "Match fonts to my logo (AI)", and the button says so.</p>
+<p><strong>Why does a pairing I expected not appear?</strong> Pairings only show fonts your Adobe Express account can use. Select text that uses the font you want and click "Use selected text's font" instead.</p>
+<p><strong>The website analysis says it could not read the page.</strong> The add-on only reads public pages. Sites that block automated visitors, or that load their styling entirely with scripts, may not work. Upload your logo instead.</p>
+<p><strong>I hit a daily limit.</strong> AI features are limited to a fair number of requests per person per day to keep the add-on free. The limit resets at midnight UTC.</p>
+<p><strong>The AI features say the server is not reachable.</strong> Check your internet connection and try again in a minute. If it keeps happening, report it using the link below.</p>
+<p><strong>How do I remove my brand kit?</strong> Click "Analyze a different logo" to replace it, or remove the add-on from Adobe Express to delete it.</p>
+<h2>Support and feedback</h2>
+<p>Report a problem or suggest a feature at <a href="https://github.com/kredznak/smart-brand-stylist/issues">https://github.com/kredznak/smart-brand-stylist/issues</a>, or use the contact address on the add-on's Adobe Express listing.</p>
+<p>Privacy policy: <a href="https://kredznak.github.io/smart-brand-stylist/">https://kredznak.github.io/smart-brand-stylist/</a> Terms of service: <a href="https://kredznak.github.io/smart-brand-stylist/terms.html">https://kredznak.github.io/smart-brand-stylist/terms.html</a></p>
+<footer>Smart Brand Stylist, an add-on for Adobe Express. Help last updated 25 September 2026.</footer>
+</main>
+</body>
+</html>

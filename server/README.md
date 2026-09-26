@@ -115,6 +115,6 @@ Adobe asks for a privacy policy URL when you submit an add-on. [`PRIVACY.md`](..
 
 It is published at **https://kredznak.github.io/smart-brand-stylist/** — that is the URL to give Adobe. GitHub Pages serves it from the `/docs` folder on `main`, so a push updates it. Pages only serves a private repository on a paid plan, which is why this one is public.
 
-Edit `PRIVACY.md`, never `docs/index.html`: the second is generated from the first, so that the published policy and the one in the repository cannot drift apart. Re-run `npm run privacy` after editing.
+Edit `PRIVACY.md`, never `docs/index.html`: the second is generated from the first, so that the published policy and the one in the repository cannot drift apart. Re-run `npm run pages` after editing (it also renders `TERMS.md` and `HELP.md` to `docs/terms.html` and `docs/help.html`).
 
 Read it before you publish it. It is accurate as of this commit, and stops being accurate if you change what is sent to the server, add analytics, or start storing anything. It was written by a developer, not a lawyer.

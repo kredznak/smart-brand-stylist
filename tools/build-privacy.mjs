@@ -1,17 +1,29 @@
-// Renders PRIVACY.md into docs/index.html, which GitHub Pages serves.
+// Renders PRIVACY.md, TERMS.md and HELP.md into docs/, which GitHub Pages serves.
 //
 // Generated rather than written twice: a privacy policy that disagrees with itself is
 // worse than not having one, and two copies of a legal document drift the moment one is
 // edited. PRIVACY.md is the source; this file is the published form of it.
 //
-// Run with: npm run privacy
+// Run with: npm run pages
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const markdown = await readFile(join(root, "PRIVACY.md"), "utf8");
+
+const PAGES = [
+    { source: "PRIVACY.md", output: "docs/index.html", description: "How the Smart Brand Stylist add-on for Adobe Express handles your information.", footer: "Policy" },
+    { source: "TERMS.md", output: "docs/terms.html", description: "Terms of service for the Smart Brand Stylist add-on for Adobe Express.", footer: "Terms" },
+    { source: "HELP.md", output: "docs/help.html", description: "How to use the Smart Brand Stylist add-on for Adobe Express.", footer: "Help" }
+];
+
+for (const page of PAGES) {
+    await render(page);
+}
+
+async function render({ source, output, description, footer }) {
+const markdown = await readFile(join(root, source), "utf8");
 
 const escape = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -67,7 +79,7 @@ const html = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escape(title)}</title>
-<meta name="description" content="How the Smart Brand Stylist add-on for Adobe Express handles your information.">
+<meta name="description" content="${escape(description)}">
 <style>
   :root {
     color-scheme: light dark;
@@ -100,11 +112,12 @@ const html = `<!DOCTYPE html>
 <body>
 <main>
 ${blocks.join("\n")}
-<footer>Smart Brand Stylist, an add-on for Adobe Express.${updated ? ` Policy last updated ${escape(updated)}.` : ""}</footer>
+<footer>Smart Brand Stylist, an add-on for Adobe Express.${updated ? ` ${footer} last updated ${escape(updated)}.` : ""}</footer>
 </main>
 </body>
 </html>
 `;
 
-await writeFile(join(root, "docs/index.html"), html);
-console.log(`docs/index.html written (${html.length} bytes) from PRIVACY.md`);
+await writeFile(join(root, output), html);
+console.log(`${output} written (${html.length} bytes) from ${source}`);
+}
