@@ -163,7 +163,7 @@ Generated from `TERMS.md` by `npm run pages`.
 
 ## Version details > General
 
-**Add-on package** — `dist.zip`, from `npm run package`. Around 66 KB.
+**Add-on package** — `dist.zip`, from `npm run package`. Around 68 KB.
 
 **Application requirements** — Adobe Express. No other Adobe app.
 
@@ -211,7 +211,7 @@ First release.
 - Palette with color harmonies, applied to a selection or to the whole page
 - Heading and body fonts with suggested pairings, applied to selected text
 - AI copy suggestions in your brand voice, placed into the document
-- Audit the page for off-brand colors, and off-brand fonts, and fix them in one step
+- Audit the page for off-brand colors and fonts, and fix them in one step
 ```
 
 ## Version details > Media
@@ -240,8 +240,12 @@ off-brand colors on it, so set that up before capturing.
 
 ## Before the first submission
 
-The publisher profile has to be completed and submitted before any add-on can be. It
-asks for a 250 x 250 logo: upload `publisher-logo-250.png`. If the add-on is to be
-available in the EU, trader details (email, telephone, address) are required too.
+The publisher profile is step 9 of the submission flow, not a separate form filled in
+beforehand: the listing is entered first and the profile is asked for before the final
+submit. It is only required once, on the first add-on. It asks for a public name, a
+marketing website scoped to the publisher rather than to one add-on
+(https://kredznak.github.io/), a description, and a 250 x 250 logo: upload
+`publisher-logo-250.png`. If the add-on is to be available in the EU, trader details
+(email, telephone, address) are required too; these are skipped for 1.0.
 
 **Notes to reviewer** are in `REVIEWER-NOTES.md`; paste them into the last step of the form.
