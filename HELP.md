@@ -54,7 +54,7 @@ Smart Brand Assistant is a free add-on for Adobe Express. It turns your logo or 
 
 ## Support and feedback
 
-Report a problem or suggest a feature at https://github.com/kredznak/smart-brand-stylist/issues, or use the contact address on the add-on's Adobe Express listing.
+Report a problem or suggest a feature at https://github.com/kredznak/smart-brand-assistant/issues, or use the contact address on the add-on's Adobe Express listing.
 
-Privacy policy: https://kredznak.github.io/smart-brand-stylist/
-Terms of service: https://kredznak.github.io/smart-brand-stylist/terms.html
+Privacy policy: https://kredznak.github.io/smart-brand-assistant/
+Terms of service: https://kredznak.github.io/smart-brand-assistant/terms.html

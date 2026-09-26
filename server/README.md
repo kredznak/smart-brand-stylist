@@ -113,7 +113,7 @@ Worth knowing: when the cap is reached, Anthropic starts refusing requests and t
 
 Adobe asks for a privacy policy URL when you submit an add-on. [`PRIVACY.md`](../PRIVACY.md) is the policy, written to match what the code actually does, and `npm run privacy` renders it into `docs/index.html` for publishing.
 
-It is published at **https://kredznak.github.io/smart-brand-stylist/** — that is the URL to give Adobe. GitHub Pages serves it from the `/docs` folder on `main`, so a push updates it. Pages only serves a private repository on a paid plan, which is why this one is public.
+It is published at **https://kredznak.github.io/smart-brand-assistant/** — that is the URL to give Adobe. GitHub Pages serves it from the `/docs` folder on `main`, so a push updates it. Pages only serves a private repository on a paid plan, which is why this one is public.
 
 Edit `PRIVACY.md`, never `docs/index.html`: the second is generated from the first, so that the published policy and the one in the repository cannot drift apart. Re-run `npm run pages` after editing (it also renders `TERMS.md` and `HELP.md` to `docs/terms.html` and `docs/help.html`).
 

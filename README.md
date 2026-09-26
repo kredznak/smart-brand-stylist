@@ -70,7 +70,7 @@ It is not a substitute for opening the add-on in Express. The stand-in answers i
 
 ## Privacy and running costs
 
-[`PRIVACY.md`](PRIVACY.md) is a complete privacy policy matching what the code actually does; Adobe asks for a public URL to one when you submit. It is published at [https://kredznak.github.io/smart-brand-stylist/](https://kredznak.github.io/smart-brand-stylist/); `npm run pages` regenerates `docs/` from the markdown (`PRIVACY.md`, `TERMS.md`, `HELP.md`), so edit the markdown files and never the generated pages. Terms: https://kredznak.github.io/smart-brand-stylist/terms.html. Help: https://kredznak.github.io/smart-brand-stylist/help.html. Usage limits, how to cap Anthropic spend, and what the server does and does not keep are all covered in [`server/README.md`](server/README.md).
+[`PRIVACY.md`](PRIVACY.md) is a complete privacy policy matching what the code actually does; Adobe asks for a public URL to one when you submit. It is published at [https://kredznak.github.io/smart-brand-assistant/](https://kredznak.github.io/smart-brand-assistant/); `npm run pages` regenerates `docs/` from the markdown (`PRIVACY.md`, `TERMS.md`, `HELP.md`), so edit the markdown files and never the generated pages. Terms: https://kredznak.github.io/smart-brand-assistant/terms.html. Help: https://kredznak.github.io/smart-brand-assistant/help.html. Usage limits, how to cap Anthropic spend, and what the server does and does not keep are all covered in [`server/README.md`](server/README.md).
 
 ## Package for submission
 

@@ -186,7 +186,7 @@ async function get(url, { as = "text", maxBytes, accept } = {}) {
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         headers: {
             // Some sites serve a stub to unknown clients; identify honestly but acceptably.
-            "user-agent": "Mozilla/5.0 (compatible; SmartBrandStylist/1.0; +https://github.com/kredznak/smart-brand-stylist)",
+            "user-agent": "Mozilla/5.0 (compatible; SmartBrandAssistant/1.0; +https://github.com/kredznak/smart-brand-assistant)",
             accept: accept ?? "text/html,application/xhtml+xml,*/*"
         }
     });

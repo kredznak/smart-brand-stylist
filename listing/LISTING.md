@@ -37,7 +37,7 @@ Not shown to users. Adobe uses it to reach the publisher.
 **Help URL**
 
 ```
-https://kredznak.github.io/smart-brand-stylist/help.html
+https://kredznak.github.io/smart-brand-assistant/help.html
 ```
 
 Generated from `HELP.md` by `npm run pages`. Walks through each tab and answers the
@@ -142,7 +142,7 @@ color picker
 **Privacy policy URL**
 
 ```
-https://kredznak.github.io/smart-brand-stylist/
+https://kredznak.github.io/smart-brand-assistant/
 ```
 
 Generated from `PRIVACY.md` by `npm run privacy`. Verified public and returning 200.
@@ -150,7 +150,7 @@ Generated from `PRIVACY.md` by `npm run privacy`. Verified public and returning 
 **Terms of service URL**
 
 ```
-https://kredznak.github.io/smart-brand-stylist/terms.html
+https://kredznak.github.io/smart-brand-assistant/terms.html
 ```
 
 Generated from `TERMS.md` by `npm run pages`.
