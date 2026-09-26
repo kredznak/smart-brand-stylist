@@ -1,12 +1,12 @@
-# Terms of service for Smart Brand Assistant
+# Terms of service for Smart Brand Stylist
 
 **Last updated: 25 September 2026**
 
-Smart Brand Assistant is a free add-on for Adobe Express. By installing or using it you agree to these terms. If you do not agree, please do not use the add-on.
+Smart Brand Stylist is a free add-on for Adobe Express. By installing or using it you agree to these terms. If you do not agree, please do not use the add-on.
 
 ## What the add-on is
 
-Smart Brand Assistant turns a logo or a website into a brand kit, suggests short marketing copy, and finds off-brand colors and fonts in your Adobe Express design. It is provided by an independent developer and is not made or endorsed by Adobe or Anthropic.
+Smart Brand Stylist turns a logo or a website into a brand kit, suggests short marketing copy, and finds off-brand colors and fonts in your Adobe Express design. It is provided by an independent developer and is not made or endorsed by Adobe or Anthropic.
 
 ## Using the add-on
 

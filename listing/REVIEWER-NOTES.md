@@ -4,7 +4,7 @@ Paste into the "Notes to reviewer" field when submitting. Attach `demo-brand/boo
 
 ---
 
-Smart Brand Assistant needs no account, sign-in or credentials. All AI features work out of the box.
+Smart Brand Stylist needs no account, sign-in or credentials. All AI features work out of the box.
 
 Suggested test (about 5 minutes):
 
