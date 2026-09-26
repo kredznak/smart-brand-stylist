@@ -12,6 +12,7 @@ of `dist.zip`.
 | `icon-144.png` | **the one you upload** |
 | `icon-64.png` | preview only: how it looks as the panel header icon |
 | `icon-36.png` | preview only: how it looks minimized |
+| `publisher-logo-250.png` | publisher profile logo (first submission only) |
 
 Adobe takes a single 144 px icon and resizes it into the 36 px and 64 px versions itself,
 so only `icon-144.png` is uploaded. The other two are here to check that the mark still

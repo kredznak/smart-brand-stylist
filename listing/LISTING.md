@@ -37,11 +37,11 @@ Not shown to users. Adobe uses it to reach the publisher.
 **Help URL**
 
 ```
-https://github.com/kredznak/smart-brand-stylist
+https://kredznak.github.io/smart-brand-stylist/help.html
 ```
 
-The README covers what each tab does, the usage limits, and what leaves the device.
-Verified public and returning 200.
+Generated from `HELP.md` by `npm run pages`. Walks through each tab and answers the
+common questions (fonts missing, website not readable, daily limit).
 
 **Description**
 
@@ -147,7 +147,13 @@ https://kredznak.github.io/smart-brand-stylist/
 
 Generated from `PRIVACY.md` by `npm run privacy`. Verified public and returning 200.
 
-**Terms of service** — none. The add-on is free and has no account.
+**Terms of service URL**
+
+```
+https://kredznak.github.io/smart-brand-stylist/terms.html
+```
+
+Generated from `TERMS.md` by `npm run pages`.
 
 **Commerce method** — Free.
 
@@ -218,6 +224,8 @@ off-brand colors on it, so set that up before capturing.
 
 ## Before the first submission
 
-The publisher profile has to be completed and submitted before any add-on can be. If
-the add-on is to be available in the EU, trader details (email, telephone, address) are
-required too.
+The publisher profile has to be completed and submitted before any add-on can be. It
+asks for a 250 x 250 logo: upload `publisher-logo-250.png`. If the add-on is to be
+available in the EU, trader details (email, telephone, address) are required too.
+
+**Notes to reviewer** are in `REVIEWER-NOTES.md`; paste them into the last step of the form.
