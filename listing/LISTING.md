@@ -47,7 +47,8 @@ common questions (fonts missing, website not readable, daily limit).
 
 ```
 Smart Brand Stylist builds a brand kit from what you already have, then keeps the
-rest of your design in line with it.
+rest of your design in line with it. Works on any Adobe Express plan — no account,
+no sign-in, no subscription.
 
 Start from a logo or a website address. Upload a logo and the colors are read on
 your device, in the panel — the image is never uploaded anywhere. Type a website
@@ -81,14 +82,15 @@ Written as an elevator pitch, as the listing guidelines ask: what it does first,
 the four tabs, then the AI disclosure. The claim that logo colors never leave the device
 is true — `src/ui/extractColors.ts` runs in the panel.
 
-That version is 1,379 characters. Adobe does not publish a limit for this field — the
+That version is 1,454 characters. Adobe does not publish a limit for this field — the
 counter in the form is the only place it appears — so if it turns out to be shorter, use
 this one instead rather than trimming on the spot. It keeps the AI disclosure and the
 on-device claim, which are the two parts that should not be cut:
 
 ```
 Build a brand kit from what you already have, then keep the rest of your design in
-line with it.
+line with it. Works on any Adobe Express plan — no account, no sign-in, no
+subscription.
 
 Start from a logo or a website address. Upload a logo and the colors are read in the
 panel, on your device — the image is never uploaded anywhere. Type a website address
