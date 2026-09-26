@@ -15,7 +15,7 @@ the keyboard.
 **Public add-on name** (25 max)
 
 ```
-Smart Brand Stylist
+Smart Brand Assistant
 ```
 
 19 characters. It says what the add-on does and is distinct enough to search for.
@@ -46,7 +46,7 @@ common questions (fonts missing, website not readable, daily limit).
 **Description**
 
 ```
-Smart Brand Stylist builds a brand kit from what you already have, then keeps the
+Smart Brand Assistant builds a brand kit from what you already have, then keeps the
 rest of your design in line with it.
 
 Start from a logo or a website address. Upload a logo and the colors are read on

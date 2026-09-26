@@ -313,7 +313,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             <div className="screen">
                 <div className="hero">
                     <img className="brandMark" src="logo.png" alt="" />
-                    <h1>Smart Brand Stylist</h1>
+                    <h1>Smart Brand Assistant</h1>
                     <p>Turn your logo or your website into a brand kit, then keep every design on brand.</p>
                 </div>
                 <button className="primary" onClick={() => setStep("upload")}>
@@ -328,7 +328,7 @@ const App = ({ addOnUISdk, sandboxProxy }: { addOnUISdk: AddOnSDKAPI; sandboxPro
             <div className="screen">
                 <header>
                     <img className="brandMark small" src="logo.png" alt="" />
-                    <h1>Smart Brand Stylist</h1>
+                    <h1>Smart Brand Assistant</h1>
                     <p>Start from your logo or your website</p>
                 </header>
 

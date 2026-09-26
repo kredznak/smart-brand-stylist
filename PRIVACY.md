@@ -1,8 +1,8 @@
-# Privacy policy for Smart Brand Stylist
+# Privacy policy for Smart Brand Assistant
 
 **Last updated: 21 September 2026**
 
-Smart Brand Stylist is an add-on for Adobe Express that turns a logo or a website into a brand kit, suggests copy, and finds off-brand colors and fonts in your design.
+Smart Brand Assistant is an add-on for Adobe Express that turns a logo or a website into a brand kit, suggests copy, and finds off-brand colors and fonts in your design.
 
 This policy explains exactly what the add-on does with your information. The short version: there are no accounts, no tracking, and nothing you give it is kept. Most of the work happens on your own computer.
 

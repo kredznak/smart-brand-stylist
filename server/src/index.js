@@ -1,4 +1,4 @@
-// Smart Brand Stylist: AI helper server (Cloudflare Worker).
+// Smart Brand Assistant: AI helper server (Cloudflare Worker).
 // Keeps the Anthropic API key off the add-on. The add-on calls this server, this server calls Claude.
 
 import { readSiteBrand } from "./site.js";

@@ -1,4 +1,4 @@
-# Smart Brand Stylist
+# Smart Brand Assistant
 
 An Adobe Express add-on: turn a logo **or a website** into a brand kit (colors and fonts), get AI copy suggestions, and find and fix off-brand colors and fonts on the page.
 

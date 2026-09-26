@@ -13,9 +13,9 @@ import { join } from "node:path";
 const root = fileURLToPath(new URL("..", import.meta.url));
 
 const PAGES = [
-    { source: "PRIVACY.md", output: "docs/index.html", description: "How the Smart Brand Stylist add-on for Adobe Express handles your information.", footer: "Policy" },
-    { source: "TERMS.md", output: "docs/terms.html", description: "Terms of service for the Smart Brand Stylist add-on for Adobe Express.", footer: "Terms" },
-    { source: "HELP.md", output: "docs/help.html", description: "How to use the Smart Brand Stylist add-on for Adobe Express.", footer: "Help" }
+    { source: "PRIVACY.md", output: "docs/index.html", description: "How the Smart Brand Assistant add-on for Adobe Express handles your information.", footer: "Policy" },
+    { source: "TERMS.md", output: "docs/terms.html", description: "Terms of service for the Smart Brand Assistant add-on for Adobe Express.", footer: "Terms" },
+    { source: "HELP.md", output: "docs/help.html", description: "How to use the Smart Brand Assistant add-on for Adobe Express.", footer: "Help" }
 ];
 
 for (const page of PAGES) {
@@ -112,7 +112,7 @@ const html = `<!DOCTYPE html>
 <body>
 <main>
 ${blocks.join("\n")}
-<footer>Smart Brand Stylist, an add-on for Adobe Express.${updated ? ` ${footer} last updated ${escape(updated)}.` : ""}</footer>
+<footer>Smart Brand Assistant, an add-on for Adobe Express.${updated ? ` ${footer} last updated ${escape(updated)}.` : ""}</footer>
 </main>
 </body>
 </html>

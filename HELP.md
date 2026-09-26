@@ -1,12 +1,12 @@
-# Help for Smart Brand Stylist
+# Help for Smart Brand Assistant
 
 **Last updated: 25 September 2026**
 
-Smart Brand Stylist is a free add-on for Adobe Express. It turns your logo or website into a brand kit, suggests copy, and finds off-brand colors and fonts on your page.
+Smart Brand Assistant is a free add-on for Adobe Express. It turns your logo or website into a brand kit, suggests copy, and finds off-brand colors and fonts on your page.
 
 ## Getting started
 
-- Open a design in Adobe Express, click Add-ons in the left rail, and open Smart Brand Stylist.
+- Open a design in Adobe Express, click Add-ons in the left rail, and open Smart Brand Assistant.
 - On the start screen, choose a logo file (PNG, JPG, SVG or WebP) or type your website address, then click Analyze brand.
 - Check the colors it found and click Add brand. Your brand kit is now saved and opens automatically next time.
 - No logo yet? Click "Start from a color instead" to build a palette from one color.
