@@ -66,6 +66,8 @@ If this add-on starts handling information differently, this policy will be upda
 
 ## Contact
 
+How the add-on uses AI, in more detail than this policy goes into, is at https://kredznak.github.io/smart-brand-stylist/ai.html.
+
 This policy is published at https://kredznak.github.io/smart-brand-stylist/
 
 Questions about it can be sent to the contact address listed on the add-on's Adobe Express listing, or raised at https://github.com/kredznak/smart-brand-stylist/issues.

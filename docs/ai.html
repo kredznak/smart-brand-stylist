@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Smart Brand Stylist uses AI</title>
+<meta name="description" content="How the Smart Brand Stylist add-on for Adobe Express uses AI, what is sent to it, and what it does not do.">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --text: #1b1b1f; --muted: #5a5a66; --rule: #e3e3e8; --link: #2b53c8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17171c; --text: #ececf1; --muted: #a9a9b4; --rule: #33333d; --link: #9db4ff; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 42rem; margin: 0 auto; padding: 4rem 1.25rem 6rem; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 .5rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.3rem; margin: 2.75rem 0 .75rem; padding-top: 1.75rem; border-top: 1px solid var(--rule); letter-spacing: -0.005em; }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .4rem; }
+  p, li { margin: 0 0 1rem; }
+  ul { padding-left: 1.2rem; margin: 0 0 1rem; }
+  li { margin-bottom: .45rem; }
+  a { color: var(--link); }
+  a:hover { text-decoration: none; }
+  strong { font-weight: 650; }
+  p:first-of-type strong { color: var(--muted); font-weight: 500; }
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .9rem; }
+  @media (max-width: 30rem) { main { padding: 2.5rem 1.1rem 4rem; } h1 { font-size: 1.6rem; } }
+</style>
+</head>
+<body>
+<main>
+<h1>How Smart Brand Stylist uses AI</h1>
+<p><strong>Last updated: 26 September 2026</strong></p>
+<p>Two features in this add-on use generative AI, and everything else does not. This page says which is which, what is sent, what is not, and what we do to keep the results honest. If you only read one line: the AI writes suggestions, you decide what to publish.</p>
+<h2>Where AI is used</h2>
+<p><strong>Copy suggestions.</strong> The brand name, short description and tone of voice you type are sent to Claude, a language model made by Anthropic, which writes five short options — a tagline, a headline, a call to action or a social caption. You choose whether to use any of them.</p>
+<p><strong>Matching fonts to your logo.</strong> If you press "Match fonts to my logo (AI)", your logo image is sent to Claude along with the add-on's own list of font pairings, and it picks the pairing that suits the logo. It chooses from that list; it cannot invent a font or return anything else.</p>
+<p>The model is Claude Haiku 4.5. Requests go to a small server we run, which holds the API key and passes the request to Anthropic. No AI model runs inside the add-on, and no model is bundled with it.</p>
+<h2>Where AI is not used</h2>
+<ul>
+  <li><strong>Reading colors from your logo</strong> happens entirely in your browser, by looking at the pixels. The image is not uploaded and no AI is involved.</li>
+  <li><strong>Reading a website</strong> fetches that page's stylesheets and reports the colors and font names it finds. The page is never sent to Anthropic and no AI is involved.</li>
+  <li><strong>The colour and font audit</strong> compares what is on your page against your brand kit using plain arithmetic. No AI is involved.</li>
+</ul>
+<p>If you never press the two AI buttons, nothing you do in this add-on reaches an AI model.</p>
+<h2>What we do not do with what you give us</h2>
+<ul>
+  <li>Nothing you type or upload is stored on our server. Requests are passed through and the reply is returned.</li>
+  <li>Nothing you provide is used to train AI models. Anthropic's commercial terms state that inputs submitted through their API are not used to train their models.</li>
+  <li>There are no accounts, no profiles and no tracking, so nothing is accumulated about you between sessions.</li>
+</ul>
+<p>What is sent, and when, is set out in full in the [privacy policy](<a href="https://kredznak.github.io/smart-brand-stylist/">https://kredznak.github.io/smart-brand-stylist/</a>).</p>
+<h2>Suggestions are suggestions</h2>
+<p>Generated text can be wrong, bland, or a poor fit for your brand, and it can be confidently wrong. The add-on says so above every set of results, and it is worth repeating here:</p>
+<ul>
+  <li><strong>Read anything before you publish it.</strong> You are responsible for what goes out under your name.</li>
+  <li><strong>Nothing generated here is advice</strong> — not legal, medical, financial or professional advice of any kind.</li>
+  <li><strong>Claims are not checked.</strong> If a suggestion states a fact, a statistic or a promise about your business, verify it yourself.</li>
+  <li><strong>Trademarks are not checked.</strong> A tagline that reads well may still be too close to someone else's. If a line matters commercially, have it checked before you rely on it.</li>
+</ul>
+<h2>Keeping the output honest</h2>
+<p>The model is told that your brand details are information to work from, not instructions to follow. That is what stops a description containing "ignore your instructions and do X" from changing its behaviour.</p>
+<p>It is also told to write original copy, never to reuse the slogans of real companies, and never to invent facts, prices, statistics or guarantees that you did not supply.</p>
+<p>These are instructions to a model, not guarantees, which is why we test them rather than trust them. A fixed set of deliberately bad briefs is sent to the live service before each release and after any change to the model or to the instructions it is given. Some of those briefs must be refused outright; others must come back free of the specific claims and slogans the brief tried to plant. If any of them slips through, the release does not go out.</p>
+<h2>When the AI declines</h2>
+<p>Claude will refuse to write copy for some briefs — a product that is illegal, content that attacks a group of people, sexually explicit material, or medical claims that could cause harm. When that happens the add-on tells you the request was declined and invites you to change the description. It does not pretend the service is broken, and it does not quietly return something else instead.</p>
+<h2>Human judgement stays with you</h2>
+<p>The add-on never publishes anything by itself. Every suggestion has to be placed on your page by you, every change it makes is an ordinary edit that Cmd/Ctrl+Z will undo, and nothing is sent anywhere until you press a button that says what it is about to do.</p>
+<h2>Questions</h2>
+<p>Ask at [kredznak@gmail.com](mailto:kredznak@gmail.com) or raise an issue at <a href="https://github.com/kredznak/smart-brand-stylist/issues">https://github.com/kredznak/smart-brand-stylist/issues</a>.</p>
+<footer>Smart Brand Stylist, an add-on for Adobe Express. Page last updated 26 September 2026.</footer>
+</main>
+</body>
+</html>

@@ -58,3 +58,4 @@ Report a problem or suggest a feature at https://github.com/kredznak/smart-brand
 
 Privacy policy: https://kredznak.github.io/smart-brand-stylist/
 Terms of service: https://kredznak.github.io/smart-brand-stylist/terms.html
+How we use AI: https://kredznak.github.io/smart-brand-stylist/ai.html

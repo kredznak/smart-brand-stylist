@@ -26,6 +26,8 @@ Font pairings and copy suggestions are produced by generative AI (Claude, from A
 
 Generated copy is not checked for trademark conflicts. If a suggested tagline or headline matters commercially, check it before relying on it.
 
+How the add-on uses AI, what is sent to it and what it will not do is set out at https://kredznak.github.io/smart-brand-stylist/ai.html.
+
 ## Privacy
 
 How the add-on handles your information is described in the privacy policy at https://kredznak.github.io/smart-brand-stylist/. In short: no accounts, no tracking, nothing you provide is stored by us, and the only data sent anywhere is what is needed for the feature you pressed.

@@ -157,6 +157,18 @@ https://kredznak.github.io/smart-brand-stylist/terms.html
 
 Generated from `TERMS.md` by `npm run pages`.
 
+**AI approach URL** — if the form asks where users can read how the add-on uses AI (it is
+asked for alongside the generative AI question), give:
+
+```
+https://kredznak.github.io/smart-brand-stylist/ai.html
+```
+
+Generated from `AI.md` by `npm run pages`. It names the model, separates the two features
+that use AI from the three that do not, states that nothing is stored or used for
+training, sets out the limits of generated text, and describes the refusal behaviour and
+the adversarial testing behind it. Help, privacy and terms all link to it.
+
 **Commerce method** — Free.
 
 ---

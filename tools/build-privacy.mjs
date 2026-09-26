@@ -1,4 +1,4 @@
-// Renders PRIVACY.md, TERMS.md and HELP.md into docs/, which GitHub Pages serves.
+// Renders PRIVACY.md, TERMS.md, HELP.md and AI.md into docs/, which GitHub Pages serves.
 //
 // Generated rather than written twice: a privacy policy that disagrees with itself is
 // worse than not having one, and two copies of a legal document drift the moment one is
@@ -15,7 +15,8 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const PAGES = [
     { source: "PRIVACY.md", output: "docs/index.html", description: "How the Smart Brand Stylist add-on for Adobe Express handles your information.", footer: "Policy" },
     { source: "TERMS.md", output: "docs/terms.html", description: "Terms of service for the Smart Brand Stylist add-on for Adobe Express.", footer: "Terms" },
-    { source: "HELP.md", output: "docs/help.html", description: "How to use the Smart Brand Stylist add-on for Adobe Express.", footer: "Help" }
+    { source: "HELP.md", output: "docs/help.html", description: "How to use the Smart Brand Stylist add-on for Adobe Express.", footer: "Help" },
+    { source: "AI.md", output: "docs/ai.html", description: "How the Smart Brand Stylist add-on for Adobe Express uses AI, what is sent to it, and what it does not do.", footer: "Page" }
 ];
 
 for (const page of PAGES) {
