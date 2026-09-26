@@ -113,7 +113,7 @@ const CopyTab = ({ sandboxProxy, voice, fonts, primaryHex, onVoiceChange, run }:
             <button className="primary" disabled={!ready || writing} onClick={generate}>
                 {writing ? "Writing…" : suggestions.length ? "Suggest more" : "Suggest copy"}
             </button>
-            <p className="hint">Suggestions are written by AI from the details above. Review them before you publish.</p>
+            <p className="hint">Suggestions are written by AI from the details above and may be inaccurate. Review them before you publish.</p>
 
             {suggestions.length > 0 && (
                 <ul className="copyList">
